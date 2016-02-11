@@ -1,0 +1,31 @@
+.ipynb_checkpoints/*
+.Rapp.history
+.Rproj.user
+
+.Rhistory
+
+.RData
+
+## latex/bibtex auxiliary files:
+*.aux
+*.log
+*.out
+*.toc
+*.dvi
+*.bbl
+*.bcf
+*.blg
+*-blx.aux
+*-blx.bib
+*.brf
+*.run.xml
+*.synctex
+*.synctex.gz
+*.synctex.gz(busy)
+*.pdfsync
+*-concordance.tex
+
+## knitr extra files
+*figure/
+*cache/
+*Rplots.pdf
