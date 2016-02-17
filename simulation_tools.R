@@ -333,6 +333,103 @@ simulate_tests <- function(gamma, B, N, selection = "random", nu = 0.5, errors =
 }
 
 
+simulate_tests_nonconstant <- function(gamma, B, N, selection = "random", nu = 0.5, errors = "normal"){
+  # Run simulations
+  # gamma     = the (nonconstant additive) treatment effect -- effect is gamma if X1>0, 0 else
+  # N         = number of individuals in the sample
+  # B         = number of replications
+  # selection = treatment assignment mechanism. Default is "random".
+  #             Options: "random", "correlated", "misspecified pscore"
+  # nu        = covariance between treatment and X1 if selection == "correlated" or "misspecified pscore". Default 0.5
+  # errors    = type of errors in the response model. Default is "normal".
+  #             Options: "normal" (N(0,1)), "heteroskedastic" (N(0, abs(X2))), "heavy" (Laplacian(0,1))
+
+  beta0 <- 1
+  beta1 <- 2
+  beta2 <- 4
+  # Set storage - things to report
+  # Compare model-based matching, t-test after OLS, and randomization without controlling for covariates
+
+  # power: number of times pvalue < 0.05
+  pvalue <- matrix(NA, nrow = B*length(gamma), ncol = 4)
+  colnames(pvalue) <- c("MM 2 Strata", "MM 5 Strata","Wilcoxon", "OLS")
+  pvalue <- cbind(pvalue, "Gamma" = rep(gamma, each = B))
+  rownum <- 0
+
+  for(g in gamma){
+    print(paste("Gamma = ", g))
+    for(b in 1:B){
+      print(rownum)
+      rownum <- rownum + 1
+
+      # Generate Xs and epsilon
+      X1 <- rnorm(N); X2 <- rnorm(N, sd = 2)
+
+      if(errors == "normal"){
+        epsilon <- rnorm(N)
+      }else{
+        if(errors == "heteroskedastic"){
+          epsilon <- rnorm(N, sd = sqrt(abs(X2)))
+        }else{
+          if(errors == "heavy"){
+            epsilon <- rlaplace(N)
+          }else{
+            stop("Invalid errors input")
+          }
+        }
+      }
+      # Treatment
+      if(selection == "random"){
+        tr <- 1*(rnorm(N) >= 0)
+      }else{
+        if(selection == "correlated"){
+          # T = nu*X_1 + delta, so cov(T, X_1) = nu*var(X_1)
+          tr <- 1*((nu*X1 + rnorm(N)) >= 0)
+        }else{
+          if(selection == "misspecified pscore"){
+            # T = nu*X_1 + X_1*X_2 + delta, so cov(T, X_1) = nu*var(X_1) still
+            tr <- 1*((nu*X1 + X1*X2 + rnorm(N)) >= 0)
+          }else{
+            stop("Invalid selection input")
+          }
+        }
+      }
+
+      # Generate Y
+      Y <- beta0 + beta1*X1 + beta2*X2 + g*tr*sign(X1) + epsilon
+#      Y <- beta0 + beta1*X1 + beta2*X2 + g*tr*(X1>0) + epsilon
+      dat <- data.frame(Y, X1, X2, tr)
+
+      # Estimate Yhat using controls
+      #      mm_model_ctrls <- lm(Y~X1+X2, dat, subset = (tr==0))
+      #      Yhat_ctrls <- predict(mm_model_ctrls, dat)
+      # Estimate Yhat on all data
+      mm_model <- lm(Y~X1+X2, dat)
+      Yhat <- predict(mm_model, dat)
+
+
+      # Create matches/strata for estimation
+      mm_strata <- Strata(treatment = tr, prediction = Yhat, strata = 5)
+      mm_few_strata <- Strata(treatment = tr, prediction = Yhat, strata = 2)
+
+      # Tests
+      strata_test <- permu_test_mean(strata = mm_strata, prediction = Yhat, treatment = tr,
+                                     response = Y)
+      #      nomatches <- list(data.frame("index" = 1:N, "score" = rep(NA, N), "treatment" = tr))
+      #      uncontrolled_test <- permu_test_mean(strata = nomatches, prediction = rep(0, length(tr)), treatment = tr, response = Y)
+      few_strata_test <- permu_test_mean(strata = mm_few_strata, prediction = Yhat, treatment = tr,
+                                         response = Y)
+
+      # Estimates
+      pvalue[rownum, "MM 2 Strata"] <- few_strata_test$pvalue["p_upper"]
+      pvalue[rownum, "MM 5 Strata"] <- strata_test$pvalue["p_upper"]
+      pvalue[rownum, "Wilcoxon"] <- wilcox.test(Y[tr == 1], Y[tr == 0])$p.value
+      pvalue[rownum, "OLS"] <- summary(lm(Y~., dat))$coeff["tr", "Pr(>|t|)"]
+    }
+  }
+  return(as.data.frame(pvalue))
+}
+
 ### Plots
 
 plot_est_by_gamma <- function(estimates){
@@ -358,6 +455,11 @@ plot_power_curves <- function(pvalues){
                                       "alpha" = rep((0:99)/100, length(gamma)),
                                       "gamma" = rep(gamma, each = 100)
                                       ))
+  power_curves[,"MM (2 Strata)"] <- as.numeric(as.character(power_curves[,"MM (2 Strata)"]))
+  power_curves[,"MM (5 Strata)"] <- as.numeric(as.character(power_curves[,"MM (5 Strata)"]))
+  power_curves[,"Wilcoxon"]      <- as.numeric(as.character(power_curves[,"Wilcoxon"]))
+  power_curves[,"OLS"]           <- as.numeric(as.character(power_curves[,"OLS"]))
+  power_curves[,"alpha"]         <- as.numeric(as.character(power_curves[,"alpha"]))
   power_curves_plot <- melt(power_curves, id.vars = c("alpha", "gamma"),
                             variable.name = "Method")
   ggplot(power_curves_plot, aes(x = alpha, y = value)) +
