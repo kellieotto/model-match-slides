@@ -24,6 +24,8 @@
 *.synctex.gz(busy)
 *.pdfsync
 *-concordance.tex
+*.nav
+*.snm
 
 ## knitr extra files
 *figure/
