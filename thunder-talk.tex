@@ -72,48 +72,77 @@
 
 \frame{\titlepage}
 
-\section{Introduction}
 \frame
 {
-  \frametitle{ ~}
+  \frametitle{Observational Studies vs Experiments}
  \begin{center}
+\begin{itemize}
+\item In randomized control trials, treatment is assigned to individuals at random.
+\item In observational studies, the way individuals select into treatment groups is unknown.
+\item \textbf{Confounding} occurs when a variable affects both treatment assignment and the outcome. It biases our estimates of the treatment effect.
+\end{itemize}
+\end{center}
+}
 
+
+\frame
+{
+  \frametitle{Matching}
+\begin{center}
+\begin{itemize}
+\item \textbf{Ideal:} group individuals by important confounders to estimate subgroup treatment effects and then average over subgroups
+\item \textbf{Reality:} many covariates, perhaps continuous, make it difficult to stratify
+\item \textbf{Solution:} use a one-dimensional score to match or group individuals
+\item  Stratify according to the ``best'' prediction of the response, based on all covariates except for the treatment
+\end{itemize}
 \end{center}
 }
 
 \frame
 {
-  \frametitle{ ~}
-  \begin{center}
-   \end{center}
+  \frametitle{Model-based Matching}
+\begin{center}
+\begin{itemize}
+\item Under standard assumptions (unconfoundedness), the \textbf{average treatment effect} is nonparametrically identified
+\item Estimate it using the difference in average residuals between treated and controls
+\item \textcolor{red}{Simulation RMSE plot}
+\end{itemize}
+\end{center}
 }
 
-\section{one}
 \frame
 {
-  \frametitle{something}
-
+  \frametitle{Model-based Matching}
+\begin{center}
+\begin{itemize}
+\item Use stratified permutation test to test the null hypothesis of no treatment effect whatsoever
+\item Stratifying on $\hat{Y}$ allows us to detect non-constant and non-linear treatment effects
+\item \textcolor{red}{Simulation power plot}
+\end{itemize}
+\end{center}
 }
 
 \frame
 {
-  \frametitle{something else}
-
-
+  \frametitle{Future Directions}
+\begin{center}
+\begin{itemize}
+\item Do different test statistics give greater power?
+\item What is the optimal way to stratify?
+\item How to quantify uncertainty -- standard errors and confidence intervals?
+\end{itemize}
+\end{center}
 }
 
-\section{Analysis}
-\frame
-{
- \frametitle{Permutation tests}
 
-}
 
-\section{References}
-\begin{frame}
-\frametitle{References}
-\bibliographystyle{plainnat}
-\bibliography{refs}
-\itemize
-\end{frame}
+%
+%\section{References}
+%\begin{frame}
+%\frametitle{References}
+%\bibliographystyle{plainnat}
+%\bibliography{refs}
+%\itemize
+%\end{frame}
+
 \end{document}
