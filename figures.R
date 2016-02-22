@@ -48,6 +48,6 @@ plot_power <- plot_power_curves(pvalues) +
   theme(strip.background = element_rect(fill = "#FFFFFF"),
         strip.text.x = element_text(color = "#143264", size = 10))
 
-png("fig/power.png", width = 800)
+png("fig/power.png", width = 900)
 plot_power
 dev.off()

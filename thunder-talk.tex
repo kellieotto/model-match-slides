@@ -61,10 +61,21 @@
 \setbeamertemplate{blocks}[width=0.0]
 \beamertemplatenavigationsymbolsempty
 
+% Making a DAG
+\usepackage{tkz-graph}  
+\usetikzlibrary{shapes.geometric}
+\tikzstyle{VertexStyle} = [shape            = ellipse,
+                               minimum width    = 6ex,%
+                               draw]
+ \tikzstyle{EdgeStyle}   = [->,>=stealth']      
+
+
+
+
 \mode<presentation>
 
 \title[Model-based matching]{Model-based matching for causal inference in observational studies}
-\author{Kellie Ottoboni}
+\author{Kellie Ottoboni \\ with Philip B. Stark}
 \institute[]{Department of Statistics, UC Berkeley}
 \date{\today}
 
@@ -77,10 +88,19 @@
   \frametitle{Observational Studies vs Experiments}
  \begin{center}
 \begin{itemize}
-\item In randomized control trials, treatment is assigned to individuals at random.
+\item \textbf{Problem:} Estimate the causal effect of a treatment on outcome of interest
+\item In randomized experiments, treatment is assigned to individuals at random.
 \item In observational studies, the way individuals select into treatment groups is unknown.
-\item \textbf{Confounding} occurs when a variable affects both treatment assignment and the outcome. It biases our estimates of the treatment effect.
+%\item \textbf{Confounding} occurs when a variable affects both treatment assignment and the outcome. It biases our estimates of the treatment effect.
 \end{itemize}
+
+\begin{figure}[h]
+\begin{tikzpicture}
+\SetGraphUnit{2} 
+\Vertex{Outcome} \NOWE(Outcome){Treatment} \NOEA(Outcome){Confounder}
+\Edges[color=red, label=``?''](Treatment, Outcome) \Edges(Confounder, Outcome) \Edges(Confounder, Treatment) 
+\end{tikzpicture}
+\end{figure}
 \end{center}
 }
 
@@ -92,9 +112,22 @@
 \begin{itemize}
 \item \textbf{Ideal:} group individuals by important confounders to estimate subgroup treatment effects and then average over subgroups
 \item \textbf{Reality:} many covariates, perhaps continuous, make it difficult to stratify
-\item \textbf{Solution:} use a one-dimensional score to match or group individuals
-\item  Stratify according to the ``best'' prediction of the response, based on all covariates except for the treatment
 \end{itemize}
+\begin{tikzpicture}[scale = 0.5]
+\foreach \x in{0,...,4}
+{   \draw (0,\x ,4) -- (4,\x ,4);
+    \draw (\x ,0,4) -- (\x ,4,4);
+    \draw (4,\x ,4) -- (4,\x ,0);
+    \draw (\x ,4,4) -- (\x ,4,0);
+    \draw (4,0,\x ) -- (4,4,\x );
+    \draw (0,4,\x ) -- (4,4,\x );
+}
+\end{tikzpicture}
+\begin{itemize}
+\item \textbf{Solution:} use a one-dimensional score to match or group individuals
+\item  Stratify according to the ``best'' prediction of the response, $\hat{Y}$, based on all covariates except for the treatment
+\end{itemize}
+
 \end{center}
 }
 
@@ -104,7 +137,7 @@
 \begin{center}
 \begin{itemize}
 \item Under standard assumptions (conditional independence of treatment and potential outcomes given $X$), the \textbf{average treatment effect} is nonparametrically identified
-\item Estimate it using the difference in average residuals between treated and controls
+\item Estimate it using the difference in average residuals, $Y - \hat{Y}$, between treated and controls
 \end{itemize}
 
 \begin{figure}[htbp]
