@@ -61,57 +61,142 @@
 \setbeamertemplate{blocks}[width=0.0]
 \beamertemplatenavigationsymbolsempty
 
+% Making a DAG
+\usepackage{tkz-graph}  
+\usetikzlibrary{shapes.geometric}
+\tikzstyle{VertexStyle} = [shape            = ellipse,
+                               minimum width    = 6ex,%
+                               draw]
+ \tikzstyle{EdgeStyle}   = [->,>=stealth']      
+
+
+
+
 \mode<presentation>
 
 \title[Model-based matching]{Model-based matching for causal inference in observational studies}
-\author{Kellie Ottoboni}
-\institute[]{Department of Statistics, UC Berkeley}
-\date{\today}
+\author{Kellie Ottoboni \\ with Philip B. Stark}
+\institute[]{Department of Statistics, UC Berkeley\\Berkeley Institute for Data Science}
+\date{March 15, 2016}
 
 \begin{document}
 
 \frame{\titlepage}
 
+\AtBeginSection[]
+{
+   \begin{frame}
+       \frametitle{Outline}
+       \tableofcontents[currentsection]
+   \end{frame}
+}
+
+
+
+\section[Introduction]{Introduction}
 \frame
 {
   \frametitle{Observational Studies vs Experiments}
  \begin{center}
 \begin{itemize}
-\item In randomized control trials, treatment is assigned to individuals at random.
+\item \textbf{Problem:} Estimate the causal effect of a treatment on outcome of interest
+\item In randomized experiments, treatment is assigned to individuals at random.
 \item In observational studies, the way individuals select into treatment groups is unknown.
-\item \textbf{Confounding} occurs when a variable affects both treatment assignment and the outcome. It biases our estimates of the treatment effect.
+%\item \textbf{Confounding} occurs when a variable affects both treatment assignment and the outcome. It biases our estimates of the treatment effect.
 \end{itemize}
+
+\begin{figure}[h]
+\begin{tikzpicture}
+\SetGraphUnit{2} 
+\Vertex{Outcome} \NOWE(Outcome){Treatment} \NOEA(Outcome){Confounder}
+\Edges[color=red, label=?](Treatment, Outcome) \Edges(Confounder, Outcome) \pause \Edges(Confounder, Treatment) 
+\end{tikzpicture}
+\end{figure}
 \end{center}
 }
+
 
 
 \frame
 {
-  \frametitle{Matching}
+\frametitle{Matching}
 \begin{center}
+
 \begin{itemize}
 \item \textbf{Ideal:} group individuals by important confounders to estimate subgroup treatment effects and then average over subgroups
 \item \textbf{Reality:} many covariates, perhaps continuous, make it difficult to stratify
+\end{itemize}
+	
+
+\begin{tikzpicture}[scale = 0.5]
+\foreach \x in{0,...,4}
+{   \draw (0,\x ,4) -- (4,\x ,4);
+    \draw (\x ,0,4) -- (\x ,4,4);
+    \draw (4,\x ,4) -- (4,\x ,0);
+    \draw (\x ,4,4) -- (\x ,4,0);
+    \draw (4,0,\x ) -- (4,4,\x );
+    \draw (0,4,\x ) -- (4,4,\x );
+}
+\end{tikzpicture}
+\end{center}
+}
+
+
+
+\frame
+{
+\frametitle{Matching}
+\begin{center}
+
+\begin{itemize}
+\item If $d$ covariates are split into $k$ bins, we have $d^k$ groups.
+\item To guarantee that we have at least one treated and one control in each group with $95\%$ probability, we need
+$$n \geq \frac{2 \log(1 - (0.95)^{1/k^{d+1}})}{\log(\frac{k^d - 1}{k^d})}$$
+\item If $d = 5$ and $k = 2$, $n \geq 225$.\\
+\item If $d = 10$ and $k = 2$, $n \geq 10,844$.
+\end{itemize}
+\end{center}
+
+\begin{flushright}
+\begin{tikzpicture}[scale = 0.5, remember picture]
+\foreach \x in{0,...,4}
+{   \draw (0,\x ,4) -- (4,\x ,4);
+    \draw (\x ,0,4) -- (\x ,4,4);
+    \draw (4,\x ,4) -- (4,\x ,0);
+    \draw (\x ,4,4) -- (\x ,4,0);
+    \draw (4,0,\x ) -- (4,4,\x );
+    \draw (0,4,\x ) -- (4,4,\x );
+}
+\end{tikzpicture}
+\end{flushright}
+
+}
+	
+
+\frame{
+\frametitle{Matching}
+\begin{center}
+\begin{itemize}
 \item \textbf{Solution:} use a one-dimensional score to match or group individuals
-\item  Stratify according to the ``best'' prediction of the response, based on all covariates except for the treatment
+\item  Stratify according to the ``best'' prediction of the response, $\hat{Y}$, based on all covariates except for the treatment
 \end{itemize}
 \end{center}
 }
 
+\section[Model-based Matching]{Model-based Matching}
 \frame
 {
   \frametitle{Model-based Matching}
 \begin{center}
 \begin{itemize}
-\item Under standard assumptions (unconfoundedness), the \textbf{average treatment effect} is nonparametrically identified
-\item Estimate it using the difference in average residuals between treated and controls
+\item Under standard assumptions (conditional independence of treatment and potential outcomes given $X$), the \textbf{average treatment effect} is nonparametrically identified
+\item Estimate it using the difference in average residuals, $Y - \hat{Y}$, between treated and controls
 \end{itemize}
 
 \begin{figure}[htbp]
 \begin{center}
 \includegraphics[width = 0.9\textwidth]{fig/estimates.png}
-\caption{default}
-\label{default}
+
 \end{center}
 \end{figure}
 
@@ -124,15 +209,13 @@
   \frametitle{Model-based Matching}
 \begin{center}
 \begin{itemize}
-\item Use stratified permutation test to test the null hypothesis of no treatment effect whatsoever
+\item Use stratified permutation test to test the \textbf{strong null hypothesis} of no treatment effect whatsoever
 \item Stratifying on $\hat{Y}$ allows us to detect non-constant and non-linear treatment effects
 \end{itemize}
 
 \begin{figure}[htbp]
 \begin{center}
 \includegraphics[width = 0.9\textwidth]{fig/power.png}
-\caption{default}
-\label{default}
 \end{center}
 \end{figure}
 
@@ -140,12 +223,18 @@
 \end{center}
 }
 
+\section[Examples]{Examples}
+
+\subsection[Toads and Packstock in Yosemite]{Toads and Packstock in Yosemite}
+\subsection[Salt and Mortality]{Salt and Mortality}
+
+\section[Conclusions]{Conclusions}
 \frame
 {
   \frametitle{Future Directions}
 \begin{center}
 \begin{itemize}
-\item Do different test statistics give greater power?
+\item Do different test statistics give greater power when the treatment effect is nonlinear?
 \item What is the optimal way to stratify?
 \item How to quantify uncertainty -- standard errors and confidence intervals?
 \end{itemize}
