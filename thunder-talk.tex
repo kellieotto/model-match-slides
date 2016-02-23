@@ -77,7 +77,7 @@
 \title[Model-based matching]{Model-based matching for causal inference in observational studies}
 \author{Kellie Ottoboni \\ with Philip B. Stark}
 \institute[]{Department of Statistics, UC Berkeley}
-\date{\today}
+\date{Draft \today}
 
 \begin{document}
 
@@ -98,7 +98,7 @@
 \begin{tikzpicture}
 \SetGraphUnit{2} 
 \Vertex{Outcome} \NOWE(Outcome){Treatment} \NOEA(Outcome){Confounder}
-\Edges[color=red, label=``?''](Treatment, Outcome) \Edges(Confounder, Outcome) \Edges(Confounder, Treatment) 
+\Edges[color=red, label=?](Treatment, Outcome) \Edges(Confounder, Outcome) \pause \Edges(Confounder, Treatment) 
 \end{tikzpicture}
 \end{figure}
 \end{center}
