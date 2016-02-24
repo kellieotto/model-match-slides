@@ -432,20 +432,25 @@ simulate_tests_nonconstant <- function(gamma, B, N, selection = "random", nu = 0
 
 ### Plots
 
-plot_est_by_gamma <- function(estimates){
+plot_est_by_gamma <- function(estimates, color_mm = FALSE){
   # Input ``estimates'' should be the output of simulate_estimation
   res_plot <- melt(estimates, id.vars = "Gamma")
+  res_plot$color_mm = rep("black", nrow(res_plot))
+  if(color_mm == TRUE){
+    res_plot$color_mm[grepl("MM", res_plot$variable)] <- "#629e1f"
+  }
   p <- ggplot(res_plot, aes(x = variable, y = value)) +
-    geom_boxplot() +
+    geom_boxplot(aes(fill = color_mm), alpha = 0.25) +
     facet_wrap(~Gamma) +
     geom_hline(aes(yintercept = Gamma), linetype = "dashed") +
     xlab("Estimation Method") +
-    ylab("Estimate")
+    ylab("Estimate") +
+    scale_fill_manual(c("#629e1f", "black"), values=c("#629e1f", "black"), guide = FALSE)
 }
 
 plot_power_curves <- function(pvalues){
   # Input ``pvalues'' should be the output of simulate_tests
-  gamma <- unique(pvalues[,"Gamma"])
+  gamma <- unique(as.character(pvalues[,"Gamma"]))
   power_curves <- lapply(gamma, function(g){
     gamma_subset <- pvalues[pvalues$Gamma == g, -5]
     apply(gamma_subset, 2, compute_power)
@@ -453,8 +458,9 @@ plot_power_curves <- function(pvalues){
   power_curves <- do.call(rbind, power_curves)
   power_curves <- as.data.frame(cbind(power_curves,
                                       "alpha" = rep((0:99)/100, length(gamma)),
-                                      "gamma" = rep(gamma, each = 100)
+                                      "gamma" = rep(unique(as.character(pvalues$Gamma)), each = 100)
                                       ))
+  power_curves$gamma <- factor(power_curves$gamma, levels = unique(as.character(pvalues$Gamma)))
   power_curves[,"MM (2 Strata)"] <- as.numeric(as.character(power_curves[,"MM (2 Strata)"]))
   power_curves[,"MM (5 Strata)"] <- as.numeric(as.character(power_curves[,"MM (5 Strata)"]))
   power_curves[,"Wilcoxon"]      <- as.numeric(as.character(power_curves[,"Wilcoxon"]))
