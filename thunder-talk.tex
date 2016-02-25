@@ -133,7 +133,7 @@
 
 \frame
 {
-  \frametitle{Model-based Matching}
+  \frametitle{Estimation}
 \begin{center}
 \begin{itemize}
 \item Under standard assumptions (conditional independence of treatment and potential outcomes given $X$), the \textbf{average treatment effect} is nonparametrically identified
@@ -151,18 +151,38 @@
 \end{center}
 }
 
+%\frame
+%{
+%  \frametitle{Model-based Matching}
+%\begin{center}
+%\begin{itemize}
+%\item Use stratified permutation test to test the \textbf{strong null hypothesis} of no treatment effect whatsoever
+%\item Stratifying on $\hat{Y}$ allows us to detect non-constant and non-linear treatment effects
+%\end{itemize}
+%
+%\begin{figure}[htbp]
+%\begin{center}
+%\includegraphics[width = 0.9\textwidth]{fig/power.png}
+%\end{center}
+%\end{figure}
+%
+%
+%\end{center}
+%}
+
 \frame
 {
-  \frametitle{Model-based Matching}
+  \frametitle{Hypothesis testing: example}
 \begin{center}
 \begin{itemize}
 \item Use stratified permutation test to test the \textbf{strong null hypothesis} of no treatment effect whatsoever
-\item Stratifying on $\hat{Y}$ allows us to detect non-constant and non-linear treatment effects
+%\item Stratifying on $\hat{Y}$ allows us to detect non-constant and non-linear treatment effects
+\item Test for association between residuals $Y- \hat{Y}$ and treatment
 \end{itemize}
 
 \begin{figure}[htbp]
 \begin{center}
-\includegraphics[width = 0.9\textwidth]{fig/power.png}
+\includegraphics[width = \textwidth]{fig/sodium_lifeexp.png}
 \end{center}
 \end{figure}
 
