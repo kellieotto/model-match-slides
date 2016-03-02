@@ -440,12 +440,12 @@ plot_est_by_gamma <- function(estimates, color_mm = FALSE){
     res_plot$color_mm[grepl("MM", res_plot$variable)] <- "#629e1f"
   }
   p <- ggplot(res_plot, aes(x = variable, y = value)) +
-    geom_boxplot(aes(fill = color_mm), alpha = 0.25) +
+    geom_boxplot(aes(fill = color_mm), alpha = 1) +
     facet_wrap(~Gamma) +
     geom_hline(aes(yintercept = Gamma), linetype = "dashed") +
     xlab("Estimation Method") +
     ylab("Estimate") +
-    scale_fill_manual(c("#629e1f", "black"), values=c("#629e1f", "black"), guide = FALSE)
+    scale_fill_manual(c("#629e1f", "gray"), values=c("#629e1f", "gray"), guide = FALSE)
 }
 
 plot_power_curves <- function(pvalues){

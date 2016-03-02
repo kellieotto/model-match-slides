@@ -111,7 +111,7 @@ dat <- data.frame("sex"     = c(rep("Male",nrow(male)), rep("Female",nrow(female
 p1 <- ggplot(dat, aes(x = sodium, y = le, color = sex)) + 
       geom_point() +
       facet_grid(sex~.) +
-      scale_color_manual(values = c("#DB7093", "#143264")) + 
+      scale_color_manual(values = c("#DB7093", "#629e1f")) + 
       theme(legend.position = "none") + 
       labs(x = expression(paste(Delta, " Sodium (g/day)")), 
            y = expression(paste(Delta, " Life Expectancy (years)")), 
@@ -124,7 +124,7 @@ p1 <- ggplot(dat, aes(x = sodium, y = le, color = sex)) +
 p2 <- ggplot(dat, aes(x = sodium, y = ex_mort, color = sex)) + 
   geom_point() +
   facet_grid(sex~.) +
-  scale_color_manual(values = c("#DB7093", "#143264")) +
+  scale_color_manual(values = c("#DB7093", "#629e1f")) +
   labs(x = expression(paste(Delta, " Sodium (g/day)")), 
        y = "", 
        title = "Residual (true - predicted) Life Expectancy, 1990 to 2010") + 

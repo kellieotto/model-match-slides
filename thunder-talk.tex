@@ -77,7 +77,7 @@
 \title[Model-based matching]{Model-based matching for causal inference in observational studies}
 \author{Kellie Ottoboni \\ with Philip B. Stark}
 \institute[]{Department of Statistics, UC Berkeley}
-\date{Draft \today}
+\date{March 14, 2016}
 
 \begin{document}
 
@@ -125,7 +125,7 @@
 \end{tikzpicture}
 \begin{itemize}
 \item \textbf{Solution:} use a one-dimensional score to match or group individuals
-\item  Stratify according to the ``best'' prediction of the response, $\hat{Y}$, based on all covariates except for the treatment
+\item  Stratify on $\hat{Y}$, the ``best'' prediction of the response based on all covariates except for the treatment
 \end{itemize}
 
 \end{center}
@@ -136,13 +136,12 @@
   \frametitle{Estimation}
 \begin{center}
 \begin{itemize}
-\item Under standard assumptions (conditional independence of treatment and potential outcomes given $X$), the \textbf{average treatment effect} is nonparametrically identified
-\item Estimate it using the difference in average residuals, $Y - \hat{Y}$, between treated and controls
+\item Under standard assumptions, we can estimate the \textbf{average treatment effect} nonparametrically using the difference in average residuals, $Y - \hat{Y}$, between treated and controls
 \end{itemize}
 
 \begin{figure}[htbp]
 \begin{center}
-\includegraphics[width = 0.9\textwidth]{fig/estimates.png}
+\includegraphics[width = \textwidth]{fig/estimates.png}
 
 \end{center}
 \end{figure}
@@ -175,9 +174,11 @@
   \frametitle{Hypothesis testing: example}
 \begin{center}
 \begin{itemize}
-\item Use stratified permutation test to test the \textbf{strong null hypothesis} of no treatment effect whatsoever
+\item Test the \textbf{strong null hypothesis} of no relationship between salt consumption and country-level mortality rates
+\item Control for other health predictors: look at residuals $Y - \hat{Y}$
+\item Stratified permutation test requires no distributional assumptions
 %\item Stratifying on $\hat{Y}$ allows us to detect non-constant and non-linear treatment effects
-\item Test for association between residuals $Y- \hat{Y}$ and treatment
+%\item Test for association between residuals $Y- \hat{Y}$ and treatment
 \end{itemize}
 
 \begin{figure}[htbp]

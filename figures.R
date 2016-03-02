@@ -29,7 +29,7 @@ plot_est <- plot_est_by_gamma(estimates, color_mm = TRUE) +
         strip.text.x = element_blank()) +
   report_theme
 
-png("fig/estimates.png", width = 800)
+png("fig/estimates.png", width = 1000)
 plot_est
 dev.off()
 
