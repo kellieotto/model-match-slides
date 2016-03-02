@@ -14,7 +14,7 @@
 %\usecolortheme{seahorse} 
 \setbeamertemplate{items}[default] 
 %\setbeamercovered{transparent}
-\setbeamertemplate{blocks}[rounded][shadow=true] 
+\setbeamertemplate{blocks}[rounded]
 \setbeamertemplate{navigation symbols}{} 
 % set the basic colors
 \setbeamercolor{palette primary}   {fg=black,bg=white}
@@ -27,17 +27,26 @@
 \setbeamercolor{cboxb}{fg=black,bg=jblue}
 \setbeamercolor{cboxr}{fg=black,bg=red}
 
+% reduce space before/after equations
+\expandafter\def\expandafter\normalsize\expandafter{%
+    \normalsize
+    \setlength\abovedisplayskip{1pt}
+    \setlength\belowdisplayskip{1pt}
+    \setlength\abovedisplayshortskip{1pt}
+    \setlength\belowdisplayshortskip{1pt}
+}
+
 % set colors for itemize/enumerate
 \setbeamercolor{item}{fg=ngreen}
 \setbeamercolor{item projected}{fg=white,bg=ngreen}
 
 % set colors for blocks
 \setbeamercolor{block title}{fg=ngreen,bg=white}
-\setbeamercolor{block body}{fg=black,bg=white}
+\setbeamercolor{block body}{fg=black,bg=jblue!10}
 
 % set colors for alerted blocks (blocks with frame)
-%\setbeamercolor{block alerted title}{fg=white,bg=jblue}
-%\setbeamercolor{block alerted body}{fg=black,bg=jblue!10}
+\setbeamercolor{block alerted title}{fg=white,bg=jblue}
+\setbeamercolor{block alerted body}{fg=black,bg=jblue!10}
 \setbeamercolor{block alerted title}{fg=white,bg=dblue!70} % Colors of the highlighted block titles
 \setbeamercolor{block alerted body}{fg=black,bg=dblue!10} % Colors of the body of highlighted blocks
 
@@ -49,9 +58,9 @@
 \setbeamerfont{block alerted title}{series=\bfseries}
 \setbeamerfont{frametitle}{series=\bfseries}
 \setbeamerfont{frametitle}{size=\Large}
-\setbeamerfont{block body}{series=\rmfamily}
-\setbeamerfont{caption}{series=\rmfamily}
-\setbeamerfont{headline}{series=\rmfamily}
+\setbeamerfont{block body}{series=\mdseries}
+\setbeamerfont{caption}{series=\mdseries}
+\setbeamerfont{headline}{series=\mdseries}
 
 
 % set some beamer theme options
@@ -70,7 +79,35 @@
  \tikzstyle{EdgeStyle}   = [->,>=stealth']      
 
 
+% Math macros
+\newcommand{\cD}{{\mathcal D}}
+\newcommand{\cF}{{\mathcal F}}
+\newcommand{\todo}[1]{{\color{red}{TO DO: \sc #1}}}
 
+\newcommand{\reals}{\mathbb{R}}
+\newcommand{\integers}{\mathbb{Z}}
+\newcommand{\naturals}{\mathbb{N}}
+\newcommand{\rationals}{\mathbb{Q}}
+
+\newcommand{\ind}[1]{1_{#1}} % Indicator function
+\newcommand{\pr}{\mathbb{P}} % Generic probability
+\newcommand{\ex}{\mathbb{E}} % Generic expectation
+\newcommand{\var}{\textrm{Var}}
+\newcommand{\cov}{\textrm{Cov}}
+
+\newcommand{\normal}{N} % for normal distribution (can probably skip this)
+\newcommand{\eps}{\varepsilon}
+\newcommand\independent{\protect\mathpalette{\protect\independenT}{\perp}}
+\def\independenT#1#2{\mathrel{\rlap{$#1#2$}\mkern2mu{#1#2}}}
+
+\newcommand{\convd}{\stackrel{d}{\longrightarrow}} % convergence in distribution/law/measure
+\newcommand{\convp}{\stackrel{P}{\longrightarrow}} % convergence in probability
+\newcommand{\convas}{\stackrel{\textrm{a.s.}}{\longrightarrow}} % convergence almost surely
+
+\newcommand{\eqd}{\stackrel{d}{=}} % equal in distribution/law/measure
+\newcommand{\argmax}{\textrm{argmax}}
+\newcommand{\argmin}{\textrm{argmin}}
+\renewcommand{\baselinestretch}{1.5}
 
 \mode<presentation>
 
@@ -117,13 +154,72 @@
 
 
 
+
+
+\frame{
+\frametitle{Neyman-Rubin Causal Model}
+\begin{center}
+\begin{itemize}
+\item Population of $i = 1, \dots, N$ individuals. Each individual has two \textbf{potential outcomes}.
+\item $Y_i(1)$ is individual $i$'s outcome if he receives treatment
+\item $Y_i(0)$ is individual $i$'s outcome if he is in the control group
+\item The treatment effect for individual $i$ is $\tau_i = Y_i(1) - Y_i(0)$
+\end{itemize}
+\vfill
+\begin{tikzpicture}
+\draw (0,0) rectangle (1,1) node[pos=.5] {$Y_2(1)$};\draw (1,0) rectangle (2,1)node[pos=.5] {$Y_2(0)$};
+\draw (0,1.5) rectangle (1,2.5) node[pos=.5] {$Y_1(1)$}; \draw (1,1.5) rectangle (2,2.5) node[pos=.5] {$Y_1(0)$};
+\draw (3,0) rectangle (4,1) node[pos=.5] {$Y_4(1)$}; \draw (4,0) rectangle (5,1) node[pos=.5] {$Y_4(0)$};
+\draw (3,1.5) rectangle (4,2.5) node[pos=.5] {$Y_3(1)$}; \draw (4,1.5) rectangle (5,2.5) node[pos=.5] {$Y_3(0)$};
+\end{tikzpicture}
+
+\end{center}
+}
+
+\frame{
+\frametitle{Fundamental Problem of Causal Inference \small{\citep{holland_statistics_1986}}}
+\begin{center}
+\begin{itemize}
+\item We may never observe both $Y_i(1)$ and $Y_i(0)$
+\item $T_i$ is a treatment indicator: $1$ if $i$ is treated, $0$ if $i$ is control
+\item The observed outcome for individual $i$ is $Y_i = T_iY_i(1) + (1-T_i)Y_i(0)$
+\end{itemize}
+
+\vfill
+\begin{tikzpicture}
+\draw (0,0) rectangle (1,1) node[pos=.5] {$Y_2(1)$}; \draw[fill=black]  (1,0) rectangle (2,1)node[pos=.5] {$Y_2(0)$};
+\draw (0,1.5) rectangle (1,2.5) node[pos=.5] {$Y_1(1)$}; \draw[fill=black]  (1,1.5) rectangle (2,2.5) node[pos=.5] {$Y_1(0)$};
+\draw[fill=black]  (3,0) rectangle (4,1) node[pos=.5] {$Y_4(1)$}; \draw (4,0) rectangle (5,1) node[pos=.5] {$Y_4(0)$};
+\draw[fill=black]  (3,1.5) rectangle (4,2.5) node[pos=.5] {$Y_3(1)$}; \draw (4,1.5) rectangle (5,2.5) node[pos=.5] {$Y_3(0)$};
+\end{tikzpicture}
+\end{center}
+}
+
+
+\frame{
+\frametitle{Estimands}
+\begin{center}
+\begin{itemize}
+\item Average treatment effect
+$$\mathbb{E}( Y_i(1) - Y_i(0))$$
+\item Average treatment effect on the treated
+$$\mathbb{E}(Y_i(1) - Y_i(0) \mid T_i = 1)$$
+\item Conditional average treatment effect
+$$ \mathbb{E}(Y_i(1) - Y_i(0) \mid X_i) $$
+\item If treatment effect varies by covariates $X$, then averages might not be informative
+\end{itemize}
+\end{center}
+}
+
+
+
 \frame
 {
 \frametitle{Matching}
 \begin{center}
 
 \begin{itemize}
-\item \textbf{Ideal:} group individuals by important confounders to estimate subgroup treatment effects and then average over subgroups
+\item \textbf{Ideal:} group individuals by $X_i$ to estimate subgroup treatment effects and then average over subgroups
 \item \textbf{Reality:} many covariates, perhaps continuous, make it difficult to stratify
 \end{itemize}
 	
@@ -178,12 +274,83 @@ $$n \geq \frac{2 \log(1 - (0.95)^{1/k^{d+1}})}{\log(\frac{k^d - 1}{k^d})}$$
 \begin{center}
 \begin{itemize}
 \item \textbf{Solution:} use a one-dimensional score to match or group individuals
-\item  Stratify according to the ``best'' prediction of the response, $\hat{Y}$, based on all covariates except for the treatment
 \end{itemize}
 \end{center}
 }
 
+
+\frame{
+\frametitle{Propensity score matching}
+\begin{itemize}
+\item The \textbf{propensity score} is an individual's probability of being assigned treatment, conditional on their covariates
+$$ p(x) = \mathbb{P}(T = 1 \mid X = x)$$
+\item The propensity score is a balancing score: $X \independent T \mid p(X)$
+\item For individuals with the same propensity score, treatment assignment is as if random
+\end{itemize}
+}
+
+\frame{
+\frametitle{Propensity score matching}
+\begin{theorem}[\cite{rosenbaum_central_1983}]
+If treatment assignment is independent of potential outcomes given $X$, 
+$$(Y(1), Y(0)) \independent T \mid X$$
+ and if every unit has a chance of receiving treatment,
+ $$0 < p(X) < 1 \text{ for all }X$$
+ then $(Y(1), Y(0)) \independent T \mid p(X)$.
+\end{theorem}
+In particular, potential outcomes are balanced between groups
+$$\ex(Y(t) \mid T=1, p(X)) = \ex(Y(t) \mid T=0, p(X)) \text{ for } t = 0,1$$
+}
+
+\frame{
+\frametitle{Propensity score matching}
+\begin{center}
+This result identifies the average treatment effect in terms of quantities we can estimate:
+
+\begin{align*}
+ \ex(Y(1) - Y(0)) &= \ex_{p(x)}\left[ \ex(Y(1) - Y(0) \mid p(x) ) \right] \\
+&= \ex_{p(x)}\left[ \ex(Y(1) \mid p(x) ) - \ex(Y(0) \mid p(x) ) \right] \\
+&= \ex_{p(x)}\left[ \ex(Y \mid p(x), T=1 )  -\ex(Y \mid p(x), T=0 ) \right] \\
+\end{align*}
+\end{center}
+}
+
+
+\frame{
+\frametitle{Propensity score matching}
+How to use the result to estimate the average treatment effect?
+\begin{itemize}
+\item Often, the true propensity score is unknown. Estimate $\hat{p}(x)$ using logistic or probit regression
+\item Match or stratify units on $\hat{p}(x)$
+\item Within groups, take difference in mean outcomes between treated and controls
+\item Average estimated treatment effects across groups
+\end{itemize}
+}
+
+
+\frame{
+\frametitle{Propensity score matching}
+In practice, estimating $\hat{p}(x)$ causes problems.
+\begin{itemize}
+\item Logistic and probit regression assume a functional form for relationship between covariates and treatment
+\item Assumes that probability of treatment takes same functional form for all individuals
+\item May actually worsen balance if estimated incorrectly
+\item Standard errors are difficult to compute for estimates from matching
+\end{itemize}
+
+}
+
+
 \section[Model-based Matching]{Model-based Matching}
+
+\frame{
+\frametitle{Model-based Matching}
+\textbf{Idea:} Instead of modeling the propensity score, model the outcome \\
+\vfill
+Stratify on $\hat{Y}$, the ``best'' prediction of the response based on all covariates except for the treatment
+}
+
+
 \frame
 {
   \frametitle{Model-based Matching}
@@ -226,6 +393,18 @@ $$n \geq \frac{2 \log(1 - (0.95)^{1/k^{d+1}})}{\log(\frac{k^d - 1}{k^d})}$$
 \section[Examples]{Examples}
 
 \subsection[Toads and Packstock in Yosemite]{Toads and Packstock in Yosemite}
+
+\frame{
+\frametitle{Salt}
+\begin{center}
+\begin{figure}[htbp]
+\begin{center}
+\includegraphics[width = 0.9\textwidth]{fig/sodium_lifeexp.png}
+\end{center}
+\end{figure}
+\end{center}
+}
+
 \subsection[Salt and Mortality]{Salt and Mortality}
 
 \section[Conclusions]{Conclusions}
@@ -243,13 +422,13 @@ $$n \geq \frac{2 \log(1 - (0.95)^{1/k^{d+1}})}{\log(\frac{k^d - 1}{k^d})}$$
 
 
 
-%
-%\section{References}
-%\begin{frame}
-%\frametitle{References}
-%\bibliographystyle{plainnat}
-%\bibliography{refs}
-%\itemize
-%\end{frame}
+
+\section{References}
+\begin{frame}
+\frametitle{References}
+\bibliographystyle{plainnat}
+\bibliography{refs}
+\itemize
+\end{frame}
 
 \end{document}
