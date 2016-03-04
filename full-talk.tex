@@ -107,7 +107,7 @@
 \newcommand{\eqd}{\stackrel{d}{=}} % equal in distribution/law/measure
 \newcommand{\argmax}{\textrm{argmax}}
 \newcommand{\argmin}{\textrm{argmin}}
-\renewcommand{\baselinestretch}{1.5}
+
 
 \mode<presentation>
 
@@ -211,13 +211,14 @@ $$ \mathbb{E}(Y_i(1) - Y_i(0) \mid X_i) $$
 \end{center}
 }
 
-
+\section[Matching]{Matching}
 
 \frame
 {
 \frametitle{Matching}
 \begin{center}
-
+How can we estimate the counterfactual for treated individuals? \\
+\vfill
 \begin{itemize}
 \item \textbf{Ideal:} group individuals by $X_i$ to estimate subgroup treatment effects and then average over subgroups
 \item \textbf{Reality:} many covariates, perhaps continuous, make it difficult to stratify
@@ -241,9 +242,9 @@ $$ \mathbb{E}(Y_i(1) - Y_i(0) \mid X_i) $$
 
 \frame
 {
-\frametitle{Matching}
+\frametitle{Aside... the curse of dimensionality }
 \begin{center}
-
+\vfill
 \begin{itemize}
 \item If $d$ covariates are split into $k$ bins, we have $d^k$ groups.
 \item To guarantee that we have at least one treated and one control in each group with $95\%$ probability, we need
@@ -279,6 +280,8 @@ $$n \geq \frac{2 \log(1 - (0.95)^{1/k^{d+1}})}{\log(\frac{k^d - 1}{k^d})}$$
 }
 
 
+\subsection[Propensity score matching]{Propensity score matching}
+
 \frame{
 \frametitle{Propensity score matching}
 \begin{itemize}
@@ -298,7 +301,8 @@ $$(Y(1), Y(0)) \independent T \mid X$$
  $$0 < p(X) < 1 \text{ for all }X$$
  then $(Y(1), Y(0)) \independent T \mid p(X)$.
 \end{theorem}
-In particular, potential outcomes are balanced between groups
+In particular, treated units can serve as the counterfactual for controls with the same $p(X)$ 
+
 $$\ex(Y(t) \mid T=1, p(X)) = \ex(Y(t) \mid T=0, p(X)) \text{ for } t = 0,1$$
 }
 
@@ -316,38 +320,43 @@ This result identifies the average treatment effect in terms of quantities we ca
 }
 
 
-\frame{
-\frametitle{Propensity score matching}
-How to use the result to estimate the average treatment effect?
-\begin{itemize}
-\item Often, the true propensity score is unknown. Estimate $\hat{p}(x)$ using logistic or probit regression
-\item Match or stratify units on $\hat{p}(x)$
-\item Within groups, take difference in mean outcomes between treated and controls
-\item Average estimated treatment effects across groups
-\end{itemize}
-}
+%\frame{
+%\frametitle{Propensity score matching}
+%How to use the result to estimate the average treatment effect?
+%\begin{itemize}
+%\item Often, the true propensity score is unknown. Estimate $\hat{p}(x)$ using logistic or probit regression
+%\item Match or stratify units on $\hat{p}(x)$
+%\item Within groups, take difference in mean outcomes between treated and controls
+%\item Average estimated treatment effects across groups
+%\end{itemize}
+%}
 
 
 \frame{
 \frametitle{Propensity score matching}
-In practice, estimating $\hat{p}(x)$ causes problems.
+$p(x)$ is usually unknown and estimated by $\hat{p}(x)$ using logistic or probit regressions
 \begin{itemize}
-\item Logistic and probit regression assume a functional form for relationship between covariates and treatment
-\item Assumes that probability of treatment takes same functional form for all individuals
-\item May actually worsen balance if estimated incorrectly
-\item Standard errors are difficult to compute for estimates from matching
+\item Assumes a simple functional form for relationship between covariates and treatment
+\item Assumes that probability of treatment takes same form for all individuals
+\item May actually worsen balance if estimated incorrectly \citep{diamond_genetic_2012}
+\end{itemize}
+\vfill
+Matching introduces bias
+\begin{itemize}
+\item Standard errors are difficult to compute for matching estimators \citep{abadie_large_2006, abadie_failure_2008}
+\item There's no ``optimal'' way to match
 \end{itemize}
 
 }
 
 
-\section[Model-based Matching]{Model-based Matching}
+\subsection[Model-based Matching]{Model-based Matching}
 
 \frame{
 \frametitle{Model-based Matching}
 \textbf{Idea:} Instead of modeling the propensity score, model the outcome \\
 \vfill
-Stratify on $\hat{Y}$, the ``best'' prediction of the response based on all covariates except for the treatment
+Stratify on $\hat{Y}$, the ``best'' prediction of the outcome based on all covariates except for the treatment
 }
 
 
