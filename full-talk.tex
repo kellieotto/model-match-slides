@@ -153,7 +153,10 @@
 }
 
 
-
+\frame{
+\frametitle{Toads}
+placeholder for toads intro
+}
 
 
 \frame{
@@ -193,6 +196,9 @@
 \draw[fill=black]  (3,1.5) rectangle (4,2.5) node[pos=.5] {$Y_3(1)$}; \draw (4,1.5) rectangle (5,2.5) node[pos=.5] {$Y_3(0)$};
 \end{tikzpicture}
 \end{center}
+
+\todo{fix box position}
+
 }
 
 
@@ -209,6 +215,25 @@ $$ \mathbb{E}(Y_i(1) - Y_i(0) \mid X_i) $$
 \item If treatment effect varies by covariates $X$, then averages might not be informative
 \end{itemize}
 \end{center}
+}
+
+\frame{
+\frametitle{Goal}
+\textbf{Goal:} test the \textbf{strong null hypothesis} of no treatment effect whatsoever. \\
+
+\begin{align*}
+H_0&: Y_i(1) = Y_i(0) \text{ for all } i \\
+H_1&: Y_i(1) \neq Y_i(0) \text{ for some } i
+\end{align*}
+
+\vspace{20pt}
+We'd like our test to have power to detect
+\begin{itemize}
+\item non-constant effects
+\item non-linear effects
+\item effects with non-constant sign
+\end{itemize}
+
 }
 
 \section[Matching]{Matching}
@@ -266,7 +291,6 @@ $$n \geq \frac{2 \log(1 - (0.95)^{1/k^{d+1}})}{\log(\frac{k^d - 1}{k^d})}$$
 }
 \end{tikzpicture}
 \end{flushright}
-
 }
 	
 
@@ -308,7 +332,6 @@ $$\ex(Y(t) \mid T=1, p(X)) = \ex(Y(t) \mid T=0, p(X)) \text{ for } t = 0,1$$
 
 \frame{
 \frametitle{Propensity score matching}
-\begin{center}
 This result identifies the average treatment effect in terms of quantities we can estimate:
 
 \begin{align*}
@@ -316,7 +339,6 @@ This result identifies the average treatment effect in terms of quantities we ca
 &= \ex_{p(x)}\left[ \ex(Y(1) \mid p(x) ) - \ex(Y(0) \mid p(x) ) \right] \\
 &= \ex_{p(x)}\left[ \ex(Y \mid p(x), T=1 )  -\ex(Y \mid p(x), T=0 ) \right] \\
 \end{align*}
-\end{center}
 }
 
 
@@ -341,10 +363,11 @@ $p(x)$ is usually unknown and estimated by $\hat{p}(x)$ using logistic or probit
 \item May actually worsen balance if estimated incorrectly \citep{diamond_genetic_2012}
 \end{itemize}
 \vfill
-Matching introduces bias
+Matching complicates inference
 \begin{itemize}
 \item Standard errors are difficult to compute for matching estimators \citep{abadie_large_2006, abadie_failure_2008}
-\item There's no ``optimal'' way to match
+\item Rarely used in hypothesis testing procedures
+\item There's no ``optimal'' way to match \citep{austin_comparison_2014}
 \end{itemize}
 
 }
@@ -356,48 +379,114 @@ Matching introduces bias
 \frametitle{Model-based Matching}
 \textbf{Idea:} Instead of modeling the propensity score, model the outcome \\
 \vfill
-Stratify on $\hat{Y}$, the ``best'' prediction of the outcome based on all covariates except for the treatment
+Computing $\hat{Y}$, the ``best'' prediction of the outcome based on all covariates except for the treatment, buys us two things:
+
+\begin{itemize} 
+\item $\hat{Y}$ is a score on which to stratify observations
+\item Using residuals $Y-\hat{Y}$ improves precision by removing variation due to $X$ \citep{rosenbaum_covariance_2002}
+\end{itemize}
 }
 
 
-\frame
-{
-  \frametitle{Model-based Matching}
-\begin{center}
+
+\frame{ 
+\frametitle{Model-based Matching}
+Suppose that outcomes have the form
+$$Y_i(t) = f(t, X_i) + \eps_i$$
+for $i = 1,\dots, N$ and $t = 0,1$. 
+Let $X_i$ be fixed and suppose that the $\eps_i$ are IID with $\ex(\eps_i) = 0$. \\
+\vspace{10pt}
+
+Under the strong null hypothesis, $f(0, X_i) = f(1, X_i)$ for each $i$. \\
+\vspace{10pt}
+
+Thus, our best guess of $Y_i$ needn't involve the treatment:
+$$\hat{Y}_i = \hat{f}(X_i)$$
+\vspace{10pt}
+
+}
+
+
+\frame{ 
+\frametitle{Permutation tests}
+\textbf{Basic idea:}
+If, under the null hypothesis, the probability distribution of the data is invariant under permutation of treatment assignments, then once we observe the actual data, we know other possible data sets that are equally likely. \\
+\vspace{10pt}
+
+Suppose we have $S$ strata and the $s$th stratum contains $N_s$ units, $n_s$ of which are treated. Then there are 
+$$\prod_{s=1}^S {N_s \choose n_s}$$
+
+equally likely assignments to treatment, conditional on the number of treated units in each stratum.
+
+\todo{flesh out}
+}
+
+
+
+\frame{
+\frametitle{Permutation tests}
+
+On the other hand, if the null hypothesis is false, then the residuals will capture some of the effect of treatment:
+$$ Y_i - \hat{Y}_i \not\independent T_i$$
+
+We will use the average difference in means across strata as our test statistic:
+
+$$\tau(Y, T) = \frac{N_s}{N} \sum_{s=1}^S \left\lvert \frac{n_s}{N_s} \sum_{i \in s : T_i=1} \left(Y_i - \hat{Y}_i \right) - \frac{N_s - n_s}{N_s} \sum_{i \in s: T_i=0} \left(Y_i - \hat{Y}_i \right) \right\rvert$$
+\todo{keep notation straight. s can't be index and set}
+}
+
+
+\frame{ 
+\frametitle{Permutation tests}
+We approximate the null distribution using this invariance principle. \\
+\vspace{10pt}
 \begin{itemize}
-\item Under standard assumptions (conditional independence of treatment and potential outcomes given $X$), the \textbf{average treatment effect} is nonparametrically identified
-\item Estimate it using the difference in average residuals, $Y - \hat{Y}$, between treated and controls
+\item Within strata, permute treatment assignments to obtain new treatment vector $T_1^*$. 
+\item Compute the test statistic $\tau(Y, T_1^*)$.
+\item Repeat a large number $B$ times to get a distribution $\tau(Y, T_1^*), \dots, \tau(Y, T_B^*)$.
+\item The p-value of the test is 
+
+$$p = \pr(\tau(Y, T) \geq \tau(Y,  t)) \approx \frac{\sum_{i=1}^B \mathbb{I}( \tau(Y, T_b^*) \geq \tau(Y, T))}{B}$$
 \end{itemize}
 
-\begin{figure}[htbp]
-\begin{center}
-\includegraphics[width = 0.9\textwidth]{fig/estimates.png}
-
-\end{center}
-\end{figure}
-
-
-\end{center}
 }
 
-\frame
-{
-  \frametitle{Model-based Matching}
-\begin{center}
-\begin{itemize}
-\item Use stratified permutation test to test the \textbf{strong null hypothesis} of no treatment effect whatsoever
-\item Stratifying on $\hat{Y}$ allows us to detect non-constant and non-linear treatment effects
-\end{itemize}
-
-\begin{figure}[htbp]
-\begin{center}
-\includegraphics[width = 0.9\textwidth]{fig/power.png}
-\end{center}
-\end{figure}
 
 
-\end{center}
-}
+
+%\frame
+%{
+%  \frametitle{Model-based Matching}
+%\begin{center}
+%\begin{itemize}
+%\item Under standard assumptions (conditional independence of treatment and potential outcomes given $X$), the \textbf{average treatment effect} is nonparametrically identified
+%\item Estimate it using the difference in average residuals, $Y - \hat{Y}$, between treated and controls
+%\end{itemize}
+%
+%\begin{figure}[htbp]
+%\includegraphics[width = 0.9\textwidth]{fig/estimates.png}
+%\end{figure}
+%\end{center}
+%}
+
+%\frame
+%{
+%  \frametitle{Model-based Matching}
+%\begin{center}
+%\begin{itemize}
+%\item Use stratified permutation test to test the \textbf{strong null hypothesis} of no treatment effect whatsoever
+%\item Stratifying on $\hat{Y}$ allows us to detect non-constant and non-linear treatment effects
+%\end{itemize}
+%
+%\begin{figure}[htbp]
+%\begin{center}
+%\includegraphics[width = 0.9\textwidth]{fig/power.png}
+%\end{center}
+%\end{figure}
+%
+%
+%\end{center}
+%}
 
 \section[Examples]{Examples}
 
@@ -432,12 +521,13 @@ Stratify on $\hat{Y}$, the ``best'' prediction of the outcome based on all covar
 
 
 
-\section{References}
 \begin{frame}
 \frametitle{References}
+\tiny
 \bibliographystyle{plainnat}
 \bibliography{refs}
 \itemize
 \end{frame}
+
 
 \end{document}
