@@ -1,0 +1,488 @@
+\documentclass{beamer}
+
+\usepackage{beamerthemesplit}
+\usepackage{graphicx}
+\usepackage{color, natbib, hyperref}
+\usepackage{bibentry}
+\nobibliography*
+
+% define colors
+\definecolor{jblue}  {RGB}{20,50,100}
+\definecolor{ngreen} {RGB}{98,158,31}
+
+%theme
+
+\usetheme{boxes} 
+%\usecolortheme{seahorse} 
+\setbeamertemplate{items}[default] 
+%\setbeamercovered{transparent}
+\setbeamertemplate{blocks}[rounded]
+\setbeamertemplate{navigation symbols}{} 
+% set the basic colors
+\setbeamercolor{palette primary}   {fg=black,bg=white}
+\setbeamercolor{palette secondary} {fg=black,bg=white}
+\setbeamercolor{palette tertiary}  {bg=jblue,fg=white}
+\setbeamercolor{palette quaternary}{fg=black,bg=white}
+\setbeamercolor{structure}{fg=jblue}
+\setbeamercolor{titlelike}         {bg=jblue,fg=white}
+\setbeamercolor{frametitle}        {bg=jblue!10,fg=jblue}
+\setbeamercolor{cboxb}{fg=black,bg=jblue}
+\setbeamercolor{cboxr}{fg=black,bg=red}
+
+% reduce space before/after equations
+\expandafter\def\expandafter\normalsize\expandafter{%
+    \normalsize
+    \setlength\abovedisplayskip{1pt}
+    \setlength\belowdisplayskip{1pt}
+    \setlength\abovedisplayshortskip{1pt}
+    \setlength\belowdisplayshortskip{1pt}
+}
+
+% set colors for itemize/enumerate
+\setbeamercolor{item}{fg=ngreen}
+\setbeamercolor{item projected}{fg=white,bg=ngreen}
+
+% set colors for blocks
+\setbeamercolor{block title}{fg=ngreen,bg=white}
+\setbeamercolor{block body}{fg=black,bg=jblue!10}
+
+% set colors for alerted blocks (blocks with frame)
+\setbeamercolor{block alerted title}{fg=white,bg=jblue}
+\setbeamercolor{block alerted body}{fg=black,bg=jblue!10}
+\setbeamercolor{block alerted title}{fg=white,bg=dblue!70} % Colors of the highlighted block titles
+\setbeamercolor{block alerted body}{fg=black,bg=dblue!10} % Colors of the body of highlighted blocks
+
+% set the fonts
+\usefonttheme{professionalfonts}
+
+\setbeamerfont{section in head/foot}{series=\bfseries}
+\setbeamerfont{block title}{series=\bfseries}
+\setbeamerfont{block alerted title}{series=\bfseries}
+\setbeamerfont{frametitle}{series=\bfseries}
+\setbeamerfont{frametitle}{size=\Large}
+\setbeamerfont{block body}{series=\mdseries}
+\setbeamerfont{caption}{series=\mdseries}
+\setbeamerfont{headline}{series=\mdseries}
+
+
+% set some beamer theme options
+\setbeamertemplate{title page}[default][colsep=-4bp,rounded=true]
+\setbeamertemplate{sections/subsections in toc}[square]
+\setbeamertemplate{items}[circle]
+\setbeamertemplate{blocks}[width=0.0]
+\beamertemplatenavigationsymbolsempty
+
+% Making a DAG
+\usepackage{tkz-graph}  
+\usetikzlibrary{shapes.geometric}
+\tikzstyle{VertexStyle} = [shape            = ellipse,
+                               minimum width    = 6ex,%
+                               draw]
+ \tikzstyle{EdgeStyle}   = [->,>=stealth']      
+
+
+% Math macros
+\newcommand{\cD}{{\mathcal D}}
+\newcommand{\cF}{{\mathcal F}}
+\newcommand{\todo}[1]{{\color{red}{TO DO: \sc #1}}}
+
+\newcommand{\reals}{\mathbb{R}}
+\newcommand{\integers}{\mathbb{Z}}
+\newcommand{\naturals}{\mathbb{N}}
+\newcommand{\rationals}{\mathbb{Q}}
+
+\newcommand{\ind}[1]{1_{#1}} % Indicator function
+\newcommand{\pr}{\mathbb{P}} % Generic probability
+\newcommand{\ex}{\mathbb{E}} % Generic expectation
+\newcommand{\var}{\textrm{Var}}
+\newcommand{\cov}{\textrm{Cov}}
+
+\newcommand{\normal}{N} % for normal distribution (can probably skip this)
+\newcommand{\eps}{\varepsilon}
+\newcommand\independent{\protect\mathpalette{\protect\independenT}{\perp}}
+\def\independenT#1#2{\mathrel{\rlap{$#1#2$}\mkern2mu{#1#2}}}
+
+\newcommand{\convd}{\stackrel{d}{\longrightarrow}} % convergence in distribution/law/measure
+\newcommand{\convp}{\stackrel{P}{\longrightarrow}} % convergence in probability
+\newcommand{\convas}{\stackrel{\textrm{a.s.}}{\longrightarrow}} % convergence almost surely
+
+\newcommand{\eqd}{\stackrel{d}{=}} % equal in distribution/law/measure
+\newcommand{\argmax}{\arg\!\max}
+\newcommand{\argmin}{\arg\!\min}
+
+
+\mode<presentation>
+
+\title[Model-based matching]{Model-based matching for causal inference in observational studies}
+\author{Kellie Ottoboni \\ with Philip B. Stark and Jas Sekhon}
+\institute[]{Department of Statistics, UC Berkeley\\Berkeley Institute for Data Science}
+\date{March 10, 2016}
+
+\begin{document}
+
+\frame{\titlepage}
+
+%\AtBeginSection[]
+%{
+%   \begin{frame}
+%       \frametitle{Outline}
+%       \tableofcontents[currentsection]
+%   \end{frame}
+%}
+
+
+
+\section[Introduction]{Introduction}
+\frame
+{
+  \frametitle{Observational Studies vs Experiments}
+  \todo{Check that bibliography entries look okay}
+ \begin{center}
+\begin{itemize}
+\item \textbf{Problem:} Estimate the causal effect of a treatment on outcome of interest
+\item In randomized experiments, treatment is assigned to individuals at random.
+\item In observational studies, the way individuals select into treatment groups is unknown.
+\end{itemize}
+
+\begin{figure}[h]
+\begin{tikzpicture}
+\SetGraphUnit{2} 
+\Vertex{Outcome} \NOWE(Outcome){Treatment} \NOEA(Outcome){Confounder}
+\Edges[color=red, label=?](Treatment, Outcome) \Edges(Confounder, Outcome) \pause \Edges(Confounder, Treatment) 
+\end{tikzpicture}
+\end{figure}
+\end{center}
+}
+
+
+\frame{
+\frametitle{Motivating Example: Toads and Packstock}
+\begin{figure}[htbp]
+\begin{center}
+\includegraphics[width = 0.8\textwidth]{fig/toadmap.png}
+\end{center}
+\end{figure}
+
+
+\tiny
+J. R. Matchett, Philip B. Stark, Steven M. Ostoja, Roland A. Knapp, Heather C. McKenny, Matthew L. Brooks,
+William T. Langford, Lucas N. Joppa, and Eric L. Berlow. Detecting the influence of rare stressors on rare species in Yosemite National Park using a novel stratified permutation test.
+Scientific Reports, 5: 10702, June 2015.
+}
+
+
+\frame{
+\frametitle{Motivating Example: Toads and Packstock}
+\begin{itemize}
+\item The response is rare (few meadows have toads).
+\item The treatment is rare (few meadows are used by packstock).
+\item Randomized experiment is impossible, and toad/packstock presence is not random across meadows.
+\item We're interested in detecting any effect, no matter how small. If treatment effect varies across meadows, then averages might not be informative.
+\end{itemize}
+}
+
+\frame{
+\frametitle{Goal}
+\textbf{Goal:} test the \textbf{strong null hypothesis} of no treatment effect whatsoever. \\
+
+\begin{align*}
+H_0&: Y_i(1) = Y_i(0) \text{ for all } i \\
+H_1&: Y_i(1) \neq Y_i(0) \text{ for some } i
+\end{align*}
+
+\vspace{20pt}
+We'd like our test to have power to detect
+\begin{itemize}
+\item non-constant effects
+\item non-linear effects
+\item effects with non-constant sign
+\end{itemize}
+
+}
+
+\section[Matching]{Matching}
+
+\frame
+{
+\frametitle{Matching}
+\begin{center}
+How can we estimate the counterfactual for treated individuals? \\
+\vfill
+\begin{itemize}
+\item \textbf{Ideal:} group individuals by $X_i$ to estimate subgroup treatment effects and then average over subgroups
+\item \textbf{Reality:} many covariates, perhaps continuous, make it difficult to stratify
+	
+\begin{center}
+
+\begin{tikzpicture}[scale = 0.5]
+
+\foreach \x in{0,...,4}
+{   \draw (0,\x ,4) -- (4,\x ,4);
+    \draw (\x ,0,4) -- (\x ,4,4);
+    \draw (4,\x ,4) -- (4,\x ,0);
+    \draw (\x ,4,4) -- (\x ,4,0);
+    \draw (4,0,\x ) -- (4,4,\x );
+    \draw (0,4,\x ) -- (4,4,\x );
+}
+\end{tikzpicture}
+\end{center}
+
+\item \textbf{Solution:} use a one-dimensional score to match or group individuals
+\end{itemize}
+\end{center}
+}
+
+\frame{
+\frametitle{Propensity score matching}
+$p(x)$ is usually unknown and estimated by $\hat{p}(x)$ using logistic or probit regressions
+\begin{itemize}
+\item Assumes a simple functional form for relationship between covariates and treatment
+\item Assumes that probability of treatment takes same form for all individuals
+\item May actually worsen balance if estimated incorrectly \citep{diamond_genetic_2012}
+\end{itemize}
+\vfill
+Matching complicates inference
+\begin{itemize}
+\item Standard errors are difficult to compute for matching estimators \citep{abadie_large_2006, abadie_failure_2008}
+\item Rarely used in hypothesis testing procedures
+\item There's no ``optimal'' way to match \citep{austin_comparison_2014}
+\end{itemize}
+
+}
+
+
+\subsection[Model-based Matching]{Model-based Matching}
+
+\frame{
+\frametitle{Model-based Matching}
+\textbf{Idea:} Instead of modeling the propensity score, model the outcome \\
+\vfill
+Computing $\hat{Y}$, the ``best'' prediction of the outcome based on all covariates except for the treatment, buys us two things:
+
+\begin{itemize} 
+\item $\hat{Y}$ is a score on which to stratify observations
+\item Using residuals $Y-\hat{Y}$ improves precision by removing variation due to $X$ \citep{rosenbaum_covariance_2002}
+\end{itemize}
+}
+
+
+
+\frame{ 
+\frametitle{Model-based Matching}
+Suppose that outcomes have the form
+$$Y_i(t) = f(t, X_i) + \eps_i$$
+for $i = 1,\dots, N$ and $t = 0,1$. 
+Let $X_i$ be fixed and suppose that the $\eps_i$ are IID with $\ex(\eps_i) = 0$. \\
+\vspace{10pt}
+
+Under the strong null hypothesis, $f(0, X_i) = f(1, X_i)$ for each $i$. \\
+\vspace{10pt}
+
+Thus, our best guess of $Y_i$ needn't involve the treatment:
+$$\hat{Y}_i = \hat{f}(X_i)$$
+\vspace{10pt}
+
+}
+
+
+
+\frame{ 
+\frametitle{Model-based Matching}
+Stratify or match units on their $\hat{Y}_i = \hat{f}(X_i)$.
+\vspace{10pt}
+\begin{itemize}
+\item Let $S_i = j$ if unit $i$ is in stratum $j$, where $j \in \{ 1, \dots, J\}$.  (For now, don't worry about how to select $J$ strata.)
+\vspace{10pt}
+
+\item \textbf{Under the null}, we expect units in the same strata to have the similar responses.\\
+\vspace{10pt}
+
+\item \textbf{Under the alternative}, the treatment adds additional information about the responses beyond $\hat{f}$.\\
+\vspace{10pt}
+
+The residuals will capture some of the effect of treatment:
+$$ Y_i - \hat{Y}_i \not\independent T_i$$
+\end{itemize}
+}
+
+
+
+\frame{
+\frametitle{Permutation tests}
+
+
+We will use the average difference in means across strata as our test statistic:
+\vspace{30pt}
+$$\tau(Y, T) = \frac{N_j}{N} \sum_{j=1}^J \left\lvert \frac{n_j}{N_j} \sum_{\substack{i  : S_i = j\\T_i=1}} \left(Y_i - \hat{Y}_i \right) - \frac{N_j - n_j}{N_j} \sum_{\substack{i : S_i = j\\ T_i=0}} \left(Y_i - \hat{Y}_i \right) \right\rvert$$
+
+\vspace{45pt}
+\textbf{NB:} we can use any other test statistic that measures association between $Y_i - \hat{Y}_i$ and $T_i$, e.g. correlation
+}
+
+\frame{ 
+\frametitle{Permutation tests}
+\textbf{Basic idea:}
+If, under the null hypothesis, the probability distribution of the data is invariant under permutation of treatment assignments, then once we observe the actual data, we know other possible data sets that are equally likely. \\
+\vspace{10pt}
+
+Suppose that the $j$th stratum contains $N_j$ units, $n_j$ of which are treated. Then there are 
+$$\prod_{j=1}^J {N_j \choose n_j}$$
+
+equally likely assignments to treatment, conditional on the number of treated units in each stratum.
+}
+
+
+
+
+
+
+\frame{ 
+\frametitle{Permutation tests}
+We approximate the null distribution using this invariance principle. \\
+\vspace{10pt}
+\begin{itemize}
+\item Within strata, permute treatment assignments to obtain new treatment vector $T_1^*$. 
+\item Compute the test statistic $\tau(Y, T_1^*)$.
+\item Repeat a large number $B$ times to get a distribution $\tau(Y, T_1^*), \dots, \tau(Y, T_B^*)$.
+\item The p-value of the test is 
+
+$$p = \pr(\tau(Y, T) \geq \tau(Y,  t)) \approx \frac{\sum_{i=1}^B \mathbb{I}( \tau(Y, T_b^*) \geq \tau(Y, T))}{B}$$
+\end{itemize}
+
+}
+
+
+\section[Simulations]{Simulations}
+
+\frame{
+\frametitle{Simulation set-up}
+$$Y_i = 1 + 2X_{1i} + 4X_{2i} + \gamma T_i + \eps_i$$
+
+where $X_{1i}, X_{2i}$ are independent $\normal(0,1)$ and $\eps_i \sim \normal(0,1)$ unless specified otherwise
+
+
+\todo{fill in}
+}
+
+
+
+\frame{
+\frametitle{}
+\todo{Show some power simulation results}
+}
+
+\frame{
+\frametitle{}
+\todo{Show results of simulations varying the fitting procedure}
+}
+
+
+\section[Future Directions]{Future Directions}
+\frame
+{
+  \frametitle{Future Directions}
+\begin{center}
+\begin{itemize}
+\item Do different test statistics give greater power? Under what circumstances?
+\item What is the optimal way to stratify?
+\item How to estimate effects and quantify uncertainty -- standard errors and confidence intervals?
+\end{itemize}
+\end{center}
+}
+
+
+\frame{
+\frametitle{Stratification}
+There are two competing forces that determine optimal strata:
+
+\begin{itemize}
+\item Power: we need enough variation in treatment within strata
+\item Precision: we want small enough strata to capture variation in treatment effects across strata
+\end{itemize}
+
+\todo{flesh out}
+}
+
+
+
+\frame{
+\frametitle{Estimation}
+\textbf{Approach 1:} direct estimation
+\vspace{20pt}
+
+If selection on observables holds and we fit $\hat{f}$ using only the controls, then an unbiased estimate of ATE $\tau$ is
+
+$$ \hat{\tau} = \frac{1}{N_t} \sum_{i: T_i = 1} (Y_i - \hat{Y}_i) - \frac{1}{N_c} \sum_{i: T_i = 0} (Y_i - \hat{Y}_i)$$
+
+
+\vspace{20pt}
+
+How can we put a standard error on this? Asymptotics...
+
+}
+
+
+
+\frame{
+\frametitle{Estimation}
+\textbf{Approach 2:} inverting hypothesis tests\\
+
+\vspace{20pt}
+Let $A_{\tau_0}$ be the acceptance region of a level-$\alpha$ test of the hypothesis $\tau = \tau_0$.
+\vspace{20pt}
+
+
+$S(X) = \{ \tau \in \reals : X \in A_\tau\}$ is a $1 - \alpha$ confidence set for $\tau$.
+\vspace{20pt}
+
+An estimate of $\tau$ is the value which minimizes the probability of rejecting the null (i.e. maximizes the p-value).
+
+$$\tilde{\tau} = \argmax_{\tau \in \reals} \pr_\tau( X \in A_\tau ) $$
+
+}
+
+\frame{
+\frametitle{Estimation}
+\textbf{Approach 2:} inverting hypothesis tests\\
+\vspace{20pt}
+
+Under $H_0: \tau = 0$, we know both potential outcomes. For $\tau \neq 0$, we don't.\\
+\vspace{20pt}
+
+We must assume some form for the treatment effect.
+\begin{itemize}
+\item Typically, one assumes constant additive effect
+\item We can generalize to $Y(1) = g(Y(0), \tau)$ where $g$ satisfies certain assumptions
+\item How can we let effects vary across strata?
+\end{itemize}
+
+}
+
+\frame{
+\frametitle{Estimation}
+Several questions arise:
+
+\begin{itemize}
+\item What is the model of treatment effects under the alternative hypothesis?
+
+\item Are we interested in ATE? What about
+\begin{itemize}
+\item $\ex(Y(1) - Y(0) \mid Y(0))$
+\item $\ex(Y(1) - Y(0) \mid X)$
+\item $\max \{Y(1) - Y(0)\}$
+\end{itemize}
+
+\end{itemize}
+}
+
+
+\begin{frame}
+\frametitle{References}
+\tiny
+\bibliographystyle{plainnat}
+\bibliography{refs}
+\itemize
+\end{frame}
+
+
+\end{document}
