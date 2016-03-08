@@ -358,24 +358,58 @@ $$p = \pr(\tau(Y, T) \geq \tau(Y,  t)) \approx \frac{\sum_{i=1}^B \mathbb{I}( \t
 
 \frame{
 \frametitle{Simulation set-up}
-$$Y_i = 1 + 2X_{1i} + 4X_{2i} + \gamma T_i + \eps_i$$
+$$Y_i = 1 + 2X_{1i} + 4X_{2i} + \tau_i T_i + \eps_i, \qquad i = 1, \dots, 100$$
+\vspace{10pt}
 
-where $X_{1i}, X_{2i}$ are independent $\normal(0,1)$ and $\eps_i \sim \normal(0,1)$ unless specified otherwise
-
-
-\todo{fill in}
+\begin{itemize}
+\itemsep10pt
+\item $X_{1i}, X_{2i}$ are independent $\normal(0,1)$ 
+\item $\eps_i \sim \normal(0,1)$ (unless specified otherwise)
+\item $T_i$ assigned various ways
+\begin{itemize}
+\item Random, independent of everything
+\item Correlated with $X_1$: $T_i = \nu X_{1i} + \delta_i$, with $\delta_i \sim \normal(0,1)$
+\item Correlated with $X_1$ and $X_2$: $T_i = \nu X_{1i} + X_{1i}X_{2i} + \delta_i$, with $\delta_i \sim \normal(0,1)$
+\end{itemize}
+\item We vary $\tau_i$ and the method of generating $T_i$
+\end{itemize}
 }
 
 
 
 \frame{
-\frametitle{}
-\todo{Show some power simulation results}
-}
+\frametitle{Results}
+Model-based matching tests have correct level
+
+\begin{figure}[htbp]
+\begin{center}
+\includegraphics[width = \textwidth]{fig/power.png}
+\end{center}
+\end{figure}}
+
+
 
 \frame{
-\frametitle{}
-\todo{Show results of simulations varying the fitting procedure}
+\frametitle{Results}
+Model-based matching tests have correct level
+
+\begin{figure}[htbp]
+\begin{center}
+\includegraphics[width = \textwidth]{fig/power_corr.png}
+\end{center}
+\end{figure}}
+
+\frame{
+\frametitle{Results}
+Model-based matching tests have higher power when treatment effects are non-constant
+
+\begin{figure}[htbp]
+\begin{center}
+\includegraphics[width = \textwidth]{fig/power_vary_sign.png}
+\end{center}
+\end{figure}
+
+
 }
 
 
@@ -397,8 +431,9 @@ where $X_{1i}, X_{2i}$ are independent $\normal(0,1)$ and $\eps_i \sim \normal(0
 \frame{
 \frametitle{Stratification}
 There are two competing forces that determine optimal strata:
-
+\vspace{20pt}
 \begin{itemize}
+\itemsep20pt
 \item Power: we need enough variation in treatment within strata
 \item Precision: we want small enough strata to capture variation in treatment effects across strata
 \end{itemize}
@@ -428,8 +463,11 @@ How can we put a standard error on this? Asymptotics...
 
 \frame{
 \frametitle{Estimation}
-\textbf{Approach 2:} inverting hypothesis tests\\
+\begin{overprint}
+  % on every slide (not sure if it is officially supported)
+  \textbf{Approach 2:} inverting hypothesis tests\\
 
+  \onslide<1>
 \vspace{20pt}
 Let $A_{\tau_0}$ be the acceptance region of a level-$\alpha$ test of the hypothesis $\tau = \tau_0$.
 \vspace{20pt}
@@ -442,11 +480,9 @@ An estimate of $\tau$ is the value which minimizes the probability of rejecting 
 
 $$\tilde{\tau} = \argmax_{\tau \in \reals} \pr_\tau( X \in A_\tau ) $$
 
-}
 
-\frame{
-\frametitle{Estimation}
-\textbf{Approach 2:} inverting hypothesis tests\\
+
+\onslide<2>
 \vspace{20pt}
 
 Under $H_0: \tau = 0$, we know both potential outcomes. For $\tau \neq 0$, we don't.\\
@@ -457,9 +493,14 @@ We must assume some form for the treatment effect.
 \item Typically, one assumes constant additive effect
 \item We can generalize to $Y(1) = g(Y(0), \tau)$ where $g$ satisfies certain assumptions
 \item How can we let effects vary across strata?
-\end{itemize}
+\end{itemize}  
 
+
+\end{overprint}
 }
+
+
+
 
 \frame{
 \frametitle{Estimation}
