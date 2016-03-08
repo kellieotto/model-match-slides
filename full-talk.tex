@@ -3,6 +3,8 @@
 \usepackage{beamerthemesplit}
 \usepackage{graphicx}
 \usepackage{color, natbib, hyperref}
+\usepackage{bibentry}
+\nobibliography*
 
 % define colors
 \definecolor{jblue}  {RGB}{20,50,100}
@@ -105,8 +107,8 @@
 \newcommand{\convas}{\stackrel{\textrm{a.s.}}{\longrightarrow}} % convergence almost surely
 
 \newcommand{\eqd}{\stackrel{d}{=}} % equal in distribution/law/measure
-\newcommand{\argmax}{\textrm{argmax}}
-\newcommand{\argmin}{\textrm{argmin}}
+\newcommand{\argmax}{\arg\!\max}
+\newcommand{\argmin}{\arg\!\min}
 
 
 \mode<presentation>
@@ -134,6 +136,7 @@
 \frame
 {
   \frametitle{Observational Studies vs Experiments}
+  \todo{Check that bibliography entries look okay}
  \begin{center}
 \begin{itemize}
 \item \textbf{Problem:} Estimate the causal effect of a treatment on outcome of interest
@@ -154,9 +157,30 @@
 
 
 \frame{
-\frametitle{Toads}
-placeholder for toads intro
+\frametitle{Motivating Example: Toads and Packstock}
+\begin{figure}[htbp]
+\begin{center}
+\includegraphics[width = 0.8\textwidth]{fig/toadmap.png}
+\end{center}
+\end{figure}
+
+
+\tiny
+J. R. Matchett, Philip B. Stark, Steven M. Ostoja, Roland A. Knapp, Heather C. McKenny, Matthew L. Brooks,
+William T. Langford, Lucas N. Joppa, and Eric L. Berlow. Detecting the influence of rare stressors on rare species in Yosemite National Park using a novel stratified permutation test.
+Scientific Reports, 5: 10702, June 2015.
 }
+
+\frame{
+\frametitle{Motivating Example: Toads and Packstock}
+\begin{itemize}
+\item The response is rare (few meadows have toads).
+\item The treatment is rare (few meadows are used by packstock).
+\item Randomized experiment is impossible, and toad/packstock presence is not random across meadows.
+\item We're interested in detecting any effect, no matter how small. If treatment effect varies across meadows, then averages might not be informative.
+\end{itemize}
+}
+
 
 
 \frame{
@@ -238,61 +262,50 @@ We'd like our test to have power to detect
 
 \section[Matching]{Matching}
 
-\frame
-{
-\frametitle{Matching}
-\begin{center}
-How can we estimate the counterfactual for treated individuals? \\
-\vfill
-\begin{itemize}
-\item \textbf{Ideal:} group individuals by $X_i$ to estimate subgroup treatment effects and then average over subgroups
-\item \textbf{Reality:} many covariates, perhaps continuous, make it difficult to stratify
-\end{itemize}
-	
-
-\begin{tikzpicture}[scale = 0.5]
-\foreach \x in{0,...,4}
-{   \draw (0,\x ,4) -- (4,\x ,4);
-    \draw (\x ,0,4) -- (\x ,4,4);
-    \draw (4,\x ,4) -- (4,\x ,0);
-    \draw (\x ,4,4) -- (\x ,4,0);
-    \draw (4,0,\x ) -- (4,4,\x );
-    \draw (0,4,\x ) -- (4,4,\x );
-}
-\end{tikzpicture}
-\end{center}
-}
 
 
+\begin{frame}
+  \frametitle<1>{Matching}
+  \frametitle<2>{Aside... the curse of dimensionality }
 
-\frame
-{
-\frametitle{Aside... the curse of dimensionality }
-\begin{center}
-\vfill
-\begin{itemize}
-\item If $d$ covariates are split into $k$ bins, we have $d^k$ groups.
-\item To guarantee that we have at least one treated and one control in each group with $95\%$ probability, we need
-$$n \geq \frac{2 \log(1 - (0.95)^{1/k^{d+1}})}{\log(\frac{k^d - 1}{k^d})}$$
-\item If $d = 5$ and $k = 2$, $n \geq 225$.\\
-\item If $d = 10$ and $k = 2$, $n \geq 10,844$.
-\end{itemize}
-\end{center}
+  \begin{overlayarea}{\textwidth}{2cm}
+    \only<1>{
+	Individuals with similar covariates should have similar outcomes, but for the treatment. \\
+	\begin{itemize}
+	\item \textbf{Ideal:} group individuals by $X_i$ to estimate subgroup treatment effects and then average over subgroups
+	\item \textbf{Reality:} many covariates, perhaps continuous, make it difficult to stratify
+	\end{itemize}
+	}
+    \only<2>{ 
+	\begin{itemize}
+	\item If $d$ covariates are split into $k$ bins, we have $d^k$ groups.
+	\item To guarantee that we have at least one treated and one control in each group with $95\%$ probability, we need
+	$$n \geq \frac{2 \log(1 - (0.95)^{1/k^{d+1}})}{\log(\frac{k^d - 1}{k^d})}$$
+	\item If $d = 5$ and $k = 2$, $n \geq 225$.\\
+	\item If $d = 10$ and $k = 2$, $n \geq 10,844$.
+	\end{itemize}
+	 }
+  \end{overlayarea}
+  \vspace{70pt}
+    \begin{overlayarea}{\textwidth}{2cm}
+    \begin{center}
+	\begin{tikzpicture}[scale = 0.5]
+		\foreach \x in{0,...,4}
+		{   \draw (0,\x ,4) -- (4,\x ,4);
+		    \draw (\x ,0,4) -- (\x ,4,4);
+    		\draw (4,\x ,4) -- (4,\x ,0);
+    		\draw (\x ,4,4) -- (\x ,4,0);
+    		\draw (4,0,\x ) -- (4,4,\x );
+    		\draw (0,4,\x ) -- (4,4,\x );
+		}
+	\end{tikzpicture}
+    \end{center}
+  \end{overlayarea}
+\end{frame}
 
-\begin{flushright}
-\begin{tikzpicture}[scale = 0.5, remember picture]
-\foreach \x in{0,...,4}
-{   \draw (0,\x ,4) -- (4,\x ,4);
-    \draw (\x ,0,4) -- (\x ,4,4);
-    \draw (4,\x ,4) -- (4,\x ,0);
-    \draw (\x ,4,4) -- (\x ,4,0);
-    \draw (4,0,\x ) -- (4,4,\x );
-    \draw (0,4,\x ) -- (4,4,\x );
-}
-\end{tikzpicture}
-\end{flushright}
-}
-	
+
+
+
 
 \frame{
 \frametitle{Matching}
@@ -373,7 +386,7 @@ Matching complicates inference
 }
 
 
-\subsection[Model-based Matching]{Model-based Matching}
+\subsection[Model-based matching]{Model-based matching}
 
 \frame{
 \frametitle{Model-based Matching}
@@ -407,35 +420,54 @@ $$\hat{Y}_i = \hat{f}(X_i)$$
 }
 
 
+
 \frame{ 
-\frametitle{Permutation tests}
-\textbf{Basic idea:}
-If, under the null hypothesis, the probability distribution of the data is invariant under permutation of treatment assignments, then once we observe the actual data, we know other possible data sets that are equally likely. \\
+\frametitle{Model-based Matching}
+Stratify or match units on their $\hat{Y}_i = \hat{f}(X_i)$.
+\vspace{10pt}
+\begin{itemize}
+\item Let $S_i = j$ if unit $i$ is in stratum $j$, where $j \in \{ 1, \dots, J\}$.  (For now, don't worry about how to select $J$ strata.)
 \vspace{10pt}
 
-Suppose we have $S$ strata and the $s$th stratum contains $N_s$ units, $n_s$ of which are treated. Then there are 
-$$\prod_{s=1}^S {N_s \choose n_s}$$
+\item \textbf{Under the null}, we expect units in the same strata to have the similar responses.\\
+\vspace{10pt}
 
-equally likely assignments to treatment, conditional on the number of treated units in each stratum.
+\item \textbf{Under the alternative}, the treatment adds additional information about the responses beyond $\hat{f}$.\\
+\vspace{10pt}
 
-\todo{flesh out}
+The residuals will capture some of the effect of treatment:
+$$ Y_i - \hat{Y}_i \not\independent T_i$$
+\end{itemize}
 }
+
+
 
 
 
 \frame{
 \frametitle{Permutation tests}
 
-On the other hand, if the null hypothesis is false, then the residuals will capture some of the effect of treatment:
-$$ Y_i - \hat{Y}_i \not\independent T_i$$
 
 We will use the average difference in means across strata as our test statistic:
+\vspace{30pt}
+$$\tau(Y, T) = \frac{N_j}{N} \sum_{j=1}^J \left\lvert \frac{n_j}{N_j} \sum_{\substack{i  : S_i = j\\T_i=1}} \left(Y_i - \hat{Y}_i \right) - \frac{N_j - n_j}{N_j} \sum_{\substack{i : S_i = j\\ T_i=0}} \left(Y_i - \hat{Y}_i \right) \right\rvert$$
 
-$$\tau(Y, T) = \frac{N_s}{N} \sum_{s=1}^S \left\lvert \frac{n_s}{N_s} \sum_{i \in s : T_i=1} \left(Y_i - \hat{Y}_i \right) - \frac{N_s - n_s}{N_s} \sum_{i \in s: T_i=0} \left(Y_i - \hat{Y}_i \right) \right\rvert$$
-\todo{keep notation straight. s can't be index and set}
+\vspace{45pt}
+\textbf{NB:} we can use any other test statistic that measures association between $Y_i - \hat{Y}_i$ and $T_i$, e.g. correlation
 }
 
 
+\frame{ 
+\frametitle{Permutation tests}
+\textbf{Basic idea:}
+If, under the null hypothesis, the probability distribution of the data is invariant under permutation of treatment assignments, then once we observe the actual data, we know other possible data sets that are equally likely. \\
+\vspace{20pt}
+
+Suppose that the $j$th stratum contains $N_j$ units, $n_j$ of which are treated. Then there are 
+$$\prod_{j=1}^J {N_j \choose n_j}$$
+
+equally likely assignments to treatment.
+}
 \frame{ 
 \frametitle{Permutation tests}
 We approximate the null distribution using this invariance principle. \\
@@ -451,6 +483,15 @@ $$p = \pr(\tau(Y, T) \geq \tau(Y,  t)) \approx \frac{\sum_{i=1}^B \mathbb{I}( \t
 
 }
 
+
+
+\frame{
+\frametitle{Permutation tests}
+\begin{itemize}
+\item Randomization inference doesn't require distributional assumptions about $\eps_i$ or $Y_i$.
+\item Stratification allows effects to vary (in magnitude, in sign, etc.) across strata.
+\end{itemize}
+}
 
 
 
@@ -493,6 +534,26 @@ $$p = \pr(\tau(Y, T) \geq \tau(Y,  t)) \approx \frac{\sum_{i=1}^B \mathbb{I}( \t
 \subsection[Toads and Packstock in Yosemite]{Toads and Packstock in Yosemite}
 
 \frame{
+\frametitle{Toads and Packstock}
+\begin{figure}[htbp]
+\begin{center}
+\includegraphics[width = 0.8\textwidth]{fig/toadmap.png}
+\end{center}
+\end{figure}
+
+
+\tiny
+J. R. Matchett, Philip B. Stark, Steven M. Ostoja, Roland A. Knapp, Heather C. McKenny, Matthew L. Brooks,
+William T. Langford, Lucas N. Joppa, and Eric L. Berlow. Detecting the influence of rare stressors on rare species in Yosemite National Park using a novel stratified permutation test.
+Scientific Reports, 5: 10702, June 2015.
+}
+
+
+
+\subsection[Salt and Mortality]{Salt and Mortality}
+
+
+\frame{
 \frametitle{Salt}
 \begin{center}
 \begin{figure}[htbp]
@@ -503,7 +564,6 @@ $$p = \pr(\tau(Y, T) \geq \tau(Y,  t)) \approx \frac{\sum_{i=1}^B \mathbb{I}( \t
 \end{center}
 }
 
-\subsection[Salt and Mortality]{Salt and Mortality}
 
 \section[Conclusions]{Conclusions}
 \frame
