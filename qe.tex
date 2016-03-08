@@ -174,6 +174,7 @@ Scientific Reports, 5: 10702, June 2015.
 \frame{
 \frametitle{Motivating Example: Toads and Packstock}
 \begin{itemize}
+\itemsep15pt 
 \item The response is rare (few meadows have toads).
 \item The treatment is rare (few meadows are used by packstock).
 \item Randomized experiment is impossible, and toad/packstock presence is not random across meadows.
@@ -273,14 +274,13 @@ Suppose that outcomes have the form
 $$Y_i(t) = f(t, X_i) + \eps_i$$
 for $i = 1,\dots, N$ and $t = 0,1$. 
 Let $X_i$ be fixed and suppose that the $\eps_i$ are IID with $\ex(\eps_i) = 0$. \\
-\vspace{10pt}
+\vspace{30pt}
 
 Under the strong null hypothesis, $f(0, X_i) = f(1, X_i)$ for each $i$. \\
-\vspace{10pt}
+\vspace{30pt}
 
 Thus, our best guess of $Y_i$ needn't involve the treatment:
 $$\hat{Y}_i = \hat{f}(X_i)$$
-\vspace{10pt}
 
 }
 
@@ -321,6 +321,7 @@ $$\tau(Y, T) = \frac{N_j}{N} \sum_{j=1}^J \left\lvert \frac{n_j}{N_j} \sum_{\sub
 
 \frame{ 
 \frametitle{Permutation tests}
+\todo{rewrite the basic idea in plain language}
 \textbf{Basic idea:}
 If, under the null hypothesis, the probability distribution of the data is invariant under permutation of treatment assignments, then once we observe the actual data, we know other possible data sets that are equally likely. \\
 \vspace{10pt}
@@ -341,6 +342,7 @@ equally likely assignments to treatment, conditional on the number of treated un
 We approximate the null distribution using this invariance principle. \\
 \vspace{10pt}
 \begin{itemize}
+\itemsep10pt 
 \item Within strata, permute treatment assignments to obtain new treatment vector $T_1^*$. 
 \item Compute the test statistic $\tau(Y, T_1^*)$.
 \item Repeat a large number $B$ times to get a distribution $\tau(Y, T_1^*), \dots, \tau(Y, T_B^*)$.
@@ -383,6 +385,7 @@ where $X_{1i}, X_{2i}$ are independent $\normal(0,1)$ and $\eps_i \sim \normal(0
   \frametitle{Future Directions}
 \begin{center}
 \begin{itemize}
+\itemsep20pt
 \item Do different test statistics give greater power? Under what circumstances?
 \item What is the optimal way to stratify?
 \item How to estimate effects and quantify uncertainty -- standard errors and confidence intervals?
@@ -472,9 +475,37 @@ Several questions arise:
 \item $\max \{Y(1) - Y(0)\}$
 \end{itemize}
 
+\item Back to the original problem of how to fit $\hat{f}$
+\begin{itemize}
+\item Fitting to controls only gives a test with incorrect level
+\item Fitting to all observations biases estimated ATE
+\end{itemize}
+
 \end{itemize}
 }
 
+
+
+\frame{
+\frametitle{Fitting method}
+Estimation is unbiased when we fit to controls
+\begin{figure}[htbp]
+\begin{center}
+\includegraphics[width = \textwidth]{fig/est_by_fit_method.png}
+\end{center}
+\end{figure}
+}
+
+\frame{
+\frametitle{Fitting method}
+Testing has higher than nominal level when we fit to controls
+\begin{figure}[htbp]
+\begin{center}
+\includegraphics[width = \textwidth]{fig/power_by_fit_method.png}
+\end{center}
+\end{figure}
+
+}
 
 \begin{frame}
 \frametitle{References}
