@@ -38,8 +38,10 @@ N <- 100
 
 mmcomp_test <- simulate_tests_which_residuals(gamma, B, N, selection = "correlated", nu = 1,
                                               refit_method = FALSE)
+png("fig/power_by_fit_method.png", width = 900)
 plot_power_curves_which_residuals(mmcomp_test)+
   ggtitle("Power Curves for Varying Magnitude of Treatment Effects, Cov(T, X_1) = 1") +
   geom_abline(intercept=0, slope=1, linetype = "dashed") +
   report_theme +
   guides(color=guide_legend(nrow=2,byrow=TRUE))
+dev.off()

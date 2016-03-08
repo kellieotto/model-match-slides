@@ -34,16 +34,16 @@ plot_est
 dev.off()
 
 
-### Testing power
+### Testing power -- constant treatment effect
 
-gamma <- c(0, 2, 5)
-pvalues <- simulate_tests_nonconstant(gamma, B = 1000, N = 100)
+gamma <- c(0, 0.25, 0.5)
+pvalues <- simulate_tests(gamma, B = 1000, N = 100)
 colnames(pvalues) <- c("MM (2 Strata)", "MM (5 Strata)", "Wilcoxon", "OLS", "Gamma")
 pvalues$Gamma <- paste("Effect Magnitude", pvalues$Gamma)
 pvalues$Gamma[pvalues$Gamma == "Effect Magnitude 0"] <- "No Effect"
 plot_power <- plot_power_curves(pvalues) +
   geom_abline(intercept = 0, slope = 1, linetype = "dashed", color = "#143264") +
-  ggtitle("Power Comparison in 1000 Simulations \n Random Treatment Assignment, Sign of Effect Correlated with Covariate") +
+  ggtitle("Power Comparison in 1000 Simulations \n Random Treatment Assignment") +
   report_theme +
   theme(strip.background = element_rect(fill = "#FFFFFF"),
         strip.text.x = element_text(color = "#143264", size = 12),
@@ -52,4 +52,44 @@ plot_power <- plot_power_curves(pvalues) +
 
 png("fig/power.png", width = 900)
 plot_power
+dev.off()
+
+### Testing power -- constant treatment effect, treatment correlated with X1
+
+gamma <- c(0, 0.25, 0.5)
+pvalues <- simulate_tests(gamma, B = 1000, N = 100, selection = "correlated", nu = 1)
+colnames(pvalues) <- c("MM (2 Strata)", "MM (5 Strata)", "Wilcoxon", "OLS", "Gamma")
+pvalues$Gamma <- paste("Effect Magnitude", pvalues$Gamma)
+pvalues$Gamma[pvalues$Gamma == "Effect Magnitude 0"] <- "No Effect"
+plot_power_corr <- plot_power_curves(pvalues) +
+  geom_abline(intercept = 0, slope = 1, linetype = "dashed", color = "#143264") +
+  ggtitle("Power Comparison in 1000 Simulations \n Cov(T, X1) = 1") +
+          report_theme +
+          theme(strip.background = element_rect(fill = "#FFFFFF"),
+          strip.text.x = element_text(color = "#143264", size = 12),
+          axis.text.x = element_text(angle = 0)) +
+  scale_x_continuous(breaks = c(0, 0.25, 0.5, 0.75, 1), labels = c(0, 0.25, 0.5, 0.75, 1))
+
+png("fig/power_corr.png", width = 900)
+plot_power_corr
+dev.off()
+
+### Testing power -- sign of tr effect depends on X1
+
+gamma <- c(0, 2, 5)
+pvalues <- simulate_tests_nonconstant(gamma, B = 10, N = 100)
+colnames(pvalues) <- c("MM (2 Strata)", "MM (5 Strata)", "Wilcoxon", "OLS", "Gamma")
+pvalues$Gamma <- paste("Effect Magnitude", pvalues$Gamma)
+pvalues$Gamma[pvalues$Gamma == "Effect Magnitude 0"] <- "No Effect"
+plot_power2 <- plot_power_curves(pvalues) +
+  geom_abline(intercept = 0, slope = 1, linetype = "dashed", color = "#143264") +
+  ggtitle("Power Comparison in 1000 Simulations \n Random Treatment Assignment, Sign of Effect Correlated with Covariate") +
+  report_theme +
+  theme(strip.background = element_rect(fill = "#FFFFFF"),
+        strip.text.x = element_text(color = "#143264", size = 12),
+        axis.text.x = element_text(angle = 0)) +
+  scale_x_continuous(breaks = c(0, 0.25, 0.5, 0.75, 1), labels = c(0, 0.25, 0.5, 0.75, 1))
+
+png("fig/power_vary_sign.png", width = 900)
+plot_power2
 dev.off()
