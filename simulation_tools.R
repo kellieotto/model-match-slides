@@ -596,8 +596,9 @@ plot_power_curves <- function(pvalues){
   power_curves <- do.call(rbind, power_curves)
   power_curves <- as.data.frame(cbind(power_curves,
                                       "alpha" = rep((0:99)/100, length(gamma)),
-                                      "gamma" = rep(gamma, each = 100)
-                                      ))
+                                      "gamma" = rep(unique(as.character(pvalues$Gamma)), each = 100)
+                                ))
+  power_curves$gamma <- factor(power_curves$gamma, levels = unique(as.character(pvalues$Gamma)))
   power_curves[,"MM (2 Strata)"] <- as.numeric(as.character(power_curves[,"MM (2 Strata)"]))
   power_curves[,"MM (5 Strata)"] <- as.numeric(as.character(power_curves[,"MM (5 Strata)"]))
   power_curves[,"Wilcoxon"]      <- as.numeric(as.character(power_curves[,"Wilcoxon"]))
