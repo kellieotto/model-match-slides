@@ -273,11 +273,14 @@ Computing $\hat{Y}$, the ``best'' prediction of the outcome based on all covaria
 Suppose that outcomes have the form
 $$Y_i(t) = f(t, X_i) + \eps_i$$
 for $i = 1,\dots, N$ and $t = 0,1$. 
-Let $X_i$ be fixed and suppose that the $\eps_i$ are IID with $\ex(\eps_i) = 0$. \\
-\vspace{30pt}
+Let $X_i$ be fixed and suppose that $\ex(\eps_i) = 0$, independent of $X_i$ and of $\eps_j, j\neq i$. \\
+\vspace{20pt}
+
+We observe $Y_i = T_iY_i(1) + (1-T_i)Y_i(0)$. 
+\vspace{20pt}
 
 Under the strong null hypothesis, $f(0, X_i) = f(1, X_i)$ for each $i$. \\
-\vspace{30pt}
+\vspace{20pt}
 
 Thus, our best guess of $Y_i$ needn't involve the treatment:
 $$\hat{Y}_i = \hat{f}(X_i)$$
@@ -536,7 +539,7 @@ Several questions arise:
 \begin{itemize}
 \item $\ex(Y(1) - Y(0) \mid Y(0))$
 \item $\ex(Y(1) - Y(0) \mid X)$
-\item $\max \{Y(1) - Y(0)\}$
+\item $\ex(Y(1) - Y(0) \mid S = j)$
 \end{itemize}
 
 \item Back to the original problem of how to fit $\hat{f}$
