@@ -114,7 +114,7 @@
 \mode<presentation>
 
 \title[Model-based matching]{Model-based matching for causal inference in observational studies}
-\author{Kellie Ottoboni \\ with Philip B. Stark and Jas Sekhon}
+\author{Kellie Ottoboni \\ with Philip B. Stark and Jasjeet Sekhon}
 \institute[]{Department of Statistics, UC Berkeley\\Berkeley Institute for Data Science}
 \date{March 10, 2016}
 
@@ -135,9 +135,9 @@
 \section[Introduction]{Introduction}
 \frame
 {
-  \frametitle{Observational Studies vs Experiments}
-  \todo{Check that bibliography entries look okay}
- \begin{center}
+\frametitle{Observational Studies vs Experiments}
+
+\begin{center}
 \begin{itemize}
 \item \textbf{Problem:} Estimate the causal effect of a treatment on outcome of interest
 \item In randomized experiments, treatment is assigned to individuals at random.
@@ -291,15 +291,10 @@ $$\hat{Y}_i = \hat{f}(X_i)$$
 Stratify or match units on their $\hat{Y}_i = \hat{f}(X_i)$.
 \vspace{10pt}
 \begin{itemize}
-\item Let $S_i = j$ if unit $i$ is in stratum $j$, where $j \in \{ 1, \dots, J\}$.  (For now, don't worry about how to select $J$ strata.)
-\vspace{10pt}
-
+\itemsep10pt
+\item Let $S_i = j$ if unit $i$ is in stratum $j$, where $j \in \{ 1, \dots, J\}$.  Stratum $j$ contains $N_j$ units, $n_j$ of which are treated. (For now, don't worry about how to select $J$ strata.) 
 \item \textbf{Under the null}, we expect units in the same strata to have the similar responses.\\
-\vspace{10pt}
-
 \item \textbf{Under the alternative}, the treatment adds additional information about the responses beyond $\hat{f}$.\\
-\vspace{10pt}
-
 The residuals will capture some of the effect of treatment:
 $$ Y_i - \hat{Y}_i \not\independent T_i$$
 \end{itemize}
@@ -321,15 +316,17 @@ $$\tau(Y, T) = \frac{N_j}{N} \sum_{j=1}^J \left\lvert \frac{n_j}{N_j} \sum_{\sub
 
 \frame{ 
 \frametitle{Permutation tests}
-\todo{rewrite the basic idea in plain language}
 \textbf{Basic idea:}
-If, under the null hypothesis, the probability distribution of the data is invariant under permutation of treatment assignments, then once we observe the actual data, we know other possible data sets that are equally likely. \\
+Under the null hypothesis, the probability distribution of the data is invariant under permutation of treatment assignments within strata. \\
 \vspace{10pt}
 
-Suppose that the $j$th stratum contains $N_j$ units, $n_j$ of which are treated. Then there are 
+Once we observe the actual data, we know other possible data sets that are equally likely. \\
+\vspace{10pt}
+
+There are 
 $$\prod_{j=1}^J {N_j \choose n_j}$$
 
-equally likely assignments to treatment, conditional on the number of treated units in each stratum.
+equally likely assignments to treatment, conditional on the strata.
 }
 
 
@@ -343,13 +340,37 @@ We approximate the null distribution using this invariance principle. \\
 \vspace{10pt}
 \begin{itemize}
 \itemsep10pt 
-\item Within strata, permute treatment assignments to obtain new treatment vector $T_1^*$. 
+\item Permute treatment assignments, independently in each stratum, to obtain new treatment vector $T_1^*$. 
 \item Compute the test statistic $\tau(Y, T_1^*)$.
 \item Repeat a large number $B$ times to get a distribution $\tau(Y, T_1^*), \dots, \tau(Y, T_B^*)$.
 \item The p-value of the test is 
 
 $$p = \pr(\tau(Y, T) \geq \tau(Y,  t)) \approx \frac{\sum_{i=1}^B \mathbb{I}( \tau(Y, T_b^*) \geq \tau(Y, T))}{B}$$
 \end{itemize}
+
+}
+
+
+
+\frame{
+\frametitle{Association or Causation?}
+
+\begin{itemize}
+\itemsep20pt
+\item \citep{matchett_detecting_2015} concede that they're not looking for causal effects
+\item Pathological example: suppose $Y_i = cT_i + \eps_i$, $X_i = T_i$. A model-based matching test will find no treatment effect.
+
+\begin{figure}[h]
+\begin{tikzpicture}
+\SetGraphUnit{2} 
+\Vertex{T} \SOWE(T){Y} \SOEA(T){X}
+\Edges(T, Y) \Edges(T, X) 
+\end{tikzpicture}
+\end{figure}
+\item Difference with predictive statistics: covariates included in fitting $\hat{f}$ must be pretreatment!
+\end{itemize}
+
+
 
 }
 
@@ -364,12 +385,12 @@ $$Y_i = 1 + 2X_{1i} + 4X_{2i} + \tau_i T_i + \eps_i, \qquad i = 1, \dots, 100$$
 \begin{itemize}
 \itemsep10pt
 \item $X_{1i}, X_{2i}$ are independent $\normal(0,1)$ 
-\item $\eps_i \sim \normal(0,1)$ (unless specified otherwise)
+\item $\eps_i$ are IID $\normal(0,1)$ (unless specified otherwise)
 \item $T_i$ assigned various ways
 \begin{itemize}
 \item Random, independent of everything
 \item Correlated with $X_1$: $T_i = \nu X_{1i} + \delta_i$, with $\delta_i \sim \normal(0,1)$
-\item Correlated with $X_1$ and $X_2$: $T_i = \nu X_{1i} + X_{1i}X_{2i} + \delta_i$, with $\delta_i \sim \normal(0,1)$
+%\item Correlated with $X_1$ and $X_2$: $T_i = \nu X_{1i} + X_{1i}X_{2i} + \delta_i$, with $\delta_i \sim \normal(0,1)$
 \end{itemize}
 \item We vary $\tau_i$ and the method of generating $T_i$
 \end{itemize}
@@ -379,7 +400,7 @@ $$Y_i = 1 + 2X_{1i} + 4X_{2i} + \tau_i T_i + \eps_i, \qquad i = 1, \dots, 100$$
 
 \frame{
 \frametitle{Results}
-Model-based matching tests have correct level
+Model-based matching tests have correct level: random treatment assignment
 
 \begin{figure}[htbp]
 \begin{center}
@@ -391,7 +412,7 @@ Model-based matching tests have correct level
 
 \frame{
 \frametitle{Results}
-Model-based matching tests have correct level
+Model-based matching tests have correct level: endogenous treatment assignment
 
 \begin{figure}[htbp]
 \begin{center}
@@ -420,7 +441,6 @@ Model-based matching tests have higher power when treatment effects are non-cons
 \begin{center}
 \begin{itemize}
 \itemsep20pt
-\item Do different test statistics give greater power? Under what circumstances?
 \item What is the optimal way to stratify?
 \item How to estimate effects and quantify uncertainty -- standard errors and confidence intervals?
 \end{itemize}
@@ -437,9 +457,12 @@ There are two competing forces that determine optimal strata:
 \item Power: we need enough variation in treatment within strata
 \item Precision: we want small enough strata to capture variation in treatment effects across strata
 \end{itemize}
+\vspace{20pt}
 
-\todo{flesh out}
+\textbf{Idea:} Use machine learning to identify strata that optimize some criterion \citep{athey_recursive_2015}
 }
+
+
 
 
 
@@ -491,7 +514,7 @@ Under $H_0: \tau = 0$, we know both potential outcomes. For $\tau \neq 0$, we do
 We must assume some form for the treatment effect.
 \begin{itemize}
 \item Typically, one assumes constant additive effect
-\item We can generalize to $Y(1) = g(Y(0), \tau)$ where $g$ satisfies certain assumptions
+\item We can generalize to $Y(1) = g(Y(0), \tau)$ where $g$ is invertible and monotonically increasing in $\tau$
 \item How can we let effects vary across strata?
 \end{itemize}  
 
@@ -548,6 +571,19 @@ Testing has higher than nominal level when we fit to controls
 
 }
 
+
+
+
+\frame{
+\frametitle{Conclusions}
+\begin{itemize}
+\itemsep20pt
+\item Model-based matching has higher power to detect non-constant treatment effects than traditional tests.
+\item The details of modeling $\hat{Y}$ matter for getting good statistical properties and causal interpretations.
+\item The methods for stratification and estimation are future work.
+\end{itemize}
+}
+
 \begin{frame}
 \frametitle{References}
 \tiny
@@ -555,6 +591,63 @@ Testing has higher than nominal level when we fit to controls
 \bibliography{refs}
 \itemize
 \end{frame}
+
+
+\section[Appendix]{Appendix}
+
+\frame{
+\frametitle{Appendix}
+\tiny
+
+\begin{lemma}
+If treatment is assigned independently across units, then $\ex\left( \frac{T_i}{N_t} \mid X\right) = \frac{1}{N}$. Likewise, $\ex\left(\frac{1-T_i}{N_c} \mid X\right) = \frac{1}{N}$, for $i = 1,\dots,N$.
+\end{lemma}
+
+\begin{proof}
+\begingroup
+\addtolength{\jot}{-0.5em}
+\begin{align*}
+\ex\left( \frac{T_i}{N_t} \mid X \right) &= \ex\left( \frac{1}{N_t} \ex(T_i \mid N_t) \right) \\
+&= \ex\left( \frac{1}{N_t} \frac{N_t}{N}\right) \\
+&= \frac{1}{N}
+\end{align*}
+\endgroup
+\end{proof}
+}
+
+\frame{
+\frametitle{Appendix}
+\tiny
+
+\begin{theorem}
+Consider the estimator
+$$ \hat{\tau} = \frac{1}{N_t} \sum_{i: T_i = 1} (Y_i - \hat{Y}_i) - \frac{1}{N_c} \sum_{i: T_i = 0} (Y_i - \hat{Y}_i)$$
+
+If $Y(1), Y(0) \independent T \mid X$ and $0 < N_t < N$, then $\hat{\tau}$ is unbiased for the ATE.
+\end{theorem}
+
+\begin{proof}
+\begingroup
+\addtolength{\jot}{-0.5em}
+\begin{align*}
+\ex(\hat{\tau}) &= \ex\left[ \frac{1}{N_t} \sum_{i: T_i = 1} (Y_i - \hat{Y}_i) - \frac{1}{N_c} \sum_{i: T_i = 0} (Y_i - \hat{Y}_i)\right] \\
+&= \ex\left[ \sum_{i=1}^N \frac{T_i(Y_i(1) - \hat{Y}_i)}{N_t} - \frac{(1-T_i)(Y_i(0) - \hat{Y}_i)}{N_c} \right] \\
+&= \ex \left[ \sum_{i=1}^N \ex\left(\frac{T_i}{N_t}\mid X\right)\ex(Y_i(1) - \hat{Y}_i \mid X)- \ex\left(\frac{1-T_i }{N_c}\mid X\right)\ex(Y_i(0) - \hat{Y}_i \mid X) \right]  \\
+&= \ex \left[ \sum_{i=1}^N \ex\left(\frac{T_i}{N_t}\mid X\right)\ex(Y_i(1) \mid X)- \ex\left(\frac{1-T_i }{N_c}\mid X\right)\ex(Y_i(0) \mid X) \right]  \\
+&= \sum_{i=1}^N \ex\left[ \ex\left(\frac{T_i}{\sum_i T_i}\mid X\right)\right] Y_i(1) - \ex\left[ \ex\left(\frac{1-T_i }{\sum_i (1-T_i)}\mid X\right)\right] Y_i(0)    \\
+&= \frac{1}{N}\sum_{i=1}^N Y_i(1)- Y_i(0)\ \\
+&= ATE
+\end{align*}
+\endgroup
+\end{proof}
+}
+
+
+
+
+
+
+
 
 
 \end{document}
