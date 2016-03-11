@@ -311,7 +311,7 @@ $$ Y_i - \hat{Y}_i \not\independent T_i$$
 
 We will use the average difference in means across strata as our test statistic:
 \vspace{30pt}
-$$\tau(Y, T) = \frac{N_j}{N} \sum_{j=1}^J \left\lvert \frac{n_j}{N_j} \sum_{\substack{i  : S_i = j\\T_i=1}} \left(Y_i - \hat{Y}_i \right) - \frac{N_j - n_j}{N_j} \sum_{\substack{i : S_i = j\\ T_i=0}} \left(Y_i - \hat{Y}_i \right) \right\rvert$$
+$$\tau(Y, T) =\sum_{j=1}^J  \frac{N_j}{N} \left\lvert \frac{1}{n_j} \sum_{\substack{i  : S_i = j\\T_i=1}} \left(Y_i - \hat{Y}_i \right) - \frac{1}{N_j - n_j} \sum_{\substack{i : S_i = j\\ T_i=0}} \left(Y_i - \hat{Y}_i \right) \right\rvert$$
 
 \vspace{45pt}
 \textbf{NB:} we can use any other test statistic that measures association between $Y_i - \hat{Y}_i$ and $T_i$, e.g. correlation

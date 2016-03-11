@@ -114,7 +114,7 @@
 \mode<presentation>
 
 \title[Model-based matching]{Model-based matching for causal inference in observational studies}
-\author{Kellie Ottoboni \\ with Philip B. Stark}
+\author{Kellie Ottoboni \\ with Philip B. Stark and Jasjeet Sekhon}
 \institute[]{Department of Statistics, UC Berkeley\\Berkeley Institute for Data Science}
 \date{March 15, 2016}
 
@@ -136,7 +136,6 @@
 \frame
 {
   \frametitle{Observational Studies vs Experiments}
-  \todo{Check that bibliography entries look okay}
  \begin{center}
 \begin{itemize}
 \item \textbf{Problem:} Estimate the causal effect of a treatment on outcome of interest
@@ -174,6 +173,7 @@ Scientific Reports, 5: 10702, June 2015.
 \frame{
 \frametitle{Motivating Example: Toads and Packstock}
 \begin{itemize}
+\itemsep10pt
 \item The response is rare (few meadows have toads).
 \item The treatment is rare (few meadows are used by packstock).
 \item Randomized experiment is impossible, and toad/packstock presence is not random across meadows.
@@ -230,6 +230,7 @@ Scientific Reports, 5: 10702, June 2015.
 \frametitle{Estimands}
 \begin{center}
 \begin{itemize}
+\itemsep20pt
 \item Average treatment effect
 $$\mathbb{E}( Y_i(1) - Y_i(0))$$
 \item Average treatment effect on the treated
@@ -322,6 +323,7 @@ We'd like our test to have power to detect
 \frame{
 \frametitle{Propensity score matching}
 \begin{itemize}
+\itemsep20pt
 \item The \textbf{propensity score} is an individual's probability of being assigned treatment, conditional on their covariates
 $$ p(x) = \mathbb{P}(T = 1 \mid X = x)$$
 \item The propensity score is a balancing score: $X \independent T \mid p(X)$
@@ -407,15 +409,17 @@ Computing $\hat{Y}$, the ``best'' prediction of the outcome based on all covaria
 Suppose that outcomes have the form
 $$Y_i(t) = f(t, X_i) + \eps_i$$
 for $i = 1,\dots, N$ and $t = 0,1$. 
-Let $X_i$ be fixed and suppose that the $\eps_i$ are IID with $\ex(\eps_i) = 0$. \\
-\vspace{10pt}
+Let $X_i$ be fixed and suppose that $\ex(\eps_i) = 0$, independent of $X_i$ and of $\eps_j, j\neq i$. \\
+\vspace{20pt}
+
+We observe $Y_i = T_iY_i(1) + (1-T_i)Y_i(0)$. 
+\vspace{20pt}
 
 Under the strong null hypothesis, $f(0, X_i) = f(1, X_i)$ for each $i$. \\
-\vspace{10pt}
+\vspace{20pt}
 
 Thus, our best guess of $Y_i$ needn't involve the treatment:
 $$\hat{Y}_i = \hat{f}(X_i)$$
-\vspace{10pt}
 
 }
 
@@ -426,15 +430,10 @@ $$\hat{Y}_i = \hat{f}(X_i)$$
 Stratify or match units on their $\hat{Y}_i = \hat{f}(X_i)$.
 \vspace{10pt}
 \begin{itemize}
-\item Let $S_i = j$ if unit $i$ is in stratum $j$, where $j \in \{ 1, \dots, J\}$.  (For now, don't worry about how to select $J$ strata.)
-\vspace{10pt}
-
+\itemsep10pt
+\item Let $S_i = j$ if unit $i$ is in stratum $j$, where $j \in \{ 1, \dots, J\}$.  Stratum $j$ contains $N_j$ units, $n_j$ of which are treated. (For now, don't worry about how to select $J$ strata.) 
 \item \textbf{Under the null}, we expect units in the same strata to have the similar responses.\\
-\vspace{10pt}
-
 \item \textbf{Under the alternative}, the treatment adds additional information about the responses beyond $\hat{f}$.\\
-\vspace{10pt}
-
 The residuals will capture some of the effect of treatment:
 $$ Y_i - \hat{Y}_i \not\independent T_i$$
 \end{itemize}
@@ -450,24 +449,30 @@ $$ Y_i - \hat{Y}_i \not\independent T_i$$
 
 We will use the average difference in means across strata as our test statistic:
 \vspace{30pt}
-$$\tau(Y, T) = \frac{N_j}{N} \sum_{j=1}^J \left\lvert \frac{n_j}{N_j} \sum_{\substack{i  : S_i = j\\T_i=1}} \left(Y_i - \hat{Y}_i \right) - \frac{N_j - n_j}{N_j} \sum_{\substack{i : S_i = j\\ T_i=0}} \left(Y_i - \hat{Y}_i \right) \right\rvert$$
+$$\tau(Y, T) =\sum_{j=1}^J  \frac{N_j}{N} \left\lvert \frac{1}{n_j} \sum_{\substack{i  : S_i = j\\T_i=1}} \left(Y_i - \hat{Y}_i \right) - \frac{1}{N_j - n_j} \sum_{\substack{i : S_i = j\\ T_i=0}} \left(Y_i - \hat{Y}_i \right) \right\rvert$$
 
 \vspace{45pt}
 \textbf{NB:} we can use any other test statistic that measures association between $Y_i - \hat{Y}_i$ and $T_i$, e.g. correlation
 }
 
-
 \frame{ 
 \frametitle{Permutation tests}
 \textbf{Basic idea:}
-If, under the null hypothesis, the probability distribution of the data is invariant under permutation of treatment assignments, then once we observe the actual data, we know other possible data sets that are equally likely. \\
-\vspace{20pt}
+Under the null hypothesis, the probability distribution of the data is invariant under permutation of treatment assignments within strata. \\
+\vspace{10pt}
 
-Suppose that the $j$th stratum contains $N_j$ units, $n_j$ of which are treated. Then there are 
+Once we observe the actual data, we know other possible data sets that are equally likely. \\
+\vspace{10pt}
+
+There are 
 $$\prod_{j=1}^J {N_j \choose n_j}$$
 
-equally likely assignments to treatment.
+equally likely assignments to treatment, conditional on the strata.
 }
+
+
+
+
 \frame{ 
 \frametitle{Permutation tests}
 We approximate the null distribution using this invariance principle. \\
