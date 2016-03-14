@@ -159,7 +159,7 @@
 \frametitle{Motivating Example: Toads and Packstock}
 \begin{figure}[htbp]
 \begin{center}
-\includegraphics[width = 0.8\textwidth]{fig/toadmap.png}
+\includegraphics[height = 0.75\textheight]{fig/toadmap.png}
 \end{center}
 \end{figure}
 
@@ -489,15 +489,27 @@ $$p = \pr(\tau(Y, T) \geq \tau(Y,  t)) \approx \frac{\sum_{i=1}^B \mathbb{I}( \t
 }
 
 
-
 \frame{
-\frametitle{Permutation tests}
-\begin{itemize}
-\item Randomization inference doesn't require distributional assumptions about $\eps_i$ or $Y_i$.
-\item Stratification allows effects to vary (in magnitude, in sign, etc.) across strata.
-\end{itemize}
-}
+\frametitle{Association or Causation?}
 
+\begin{itemize}
+\itemsep20pt
+\item Pathological example: suppose $Y_i = cT_i + \eps_i$, $X_i = T_i$. A model-based matching test will find no treatment effect.
+
+\begin{figure}[h]
+\begin{tikzpicture}
+\SetGraphUnit{2} 
+\Vertex{T} \SOWE(T){Y} \SOEA(T){X}
+\Edges(T, Y) \Edges(T, X) 
+\end{tikzpicture}
+\end{figure}
+\item Difference with predictive statistics: covariates included in fitting $\hat{f}$ must be pretreatment!
+\item Causal inference requires more assumptions than we've made.
+\end{itemize}
+
+
+
+}
 
 
 %\frame
@@ -542,7 +554,7 @@ $$p = \pr(\tau(Y, T) \geq \tau(Y,  t)) \approx \frac{\sum_{i=1}^B \mathbb{I}( \t
 \frametitle{Toads and Packstock}
 \begin{figure}[htbp]
 \begin{center}
-\includegraphics[width = 0.8\textwidth]{fig/toadmap.png}
+\includegraphics[height = 0.75\textheight]{fig/toadmap.png}
 \end{center}
 \end{figure}
 
@@ -553,13 +565,96 @@ William T. Langford, Lucas N. Joppa, and Eric L. Berlow. Detecting the influence
 Scientific Reports, 5: 10702, June 2015.
 }
 
+\frame{
+\frametitle{Toads and Packstock}
+
+\begin{itemize}
+\itemsep10pt
+\item Response is binary: did toads breed in the meadow or not?
+\item Treatment is continuous: average or maximum packstock nights in each meadow
+\item Prediction: probability of toad presence according to meadow characteristics
+\item Test statistic: within-stratum absolute value of correlation between treatment and residuals, averaged over strata
+\end{itemize}
+}
+
+
+\frame{
+\frametitle{Toads and Packstock}
+Intensity of packstock use appears to be weakly correlated with toad presence. The correlation is not significant.
+ 
+\begin{figure}[htbp]
+\begin{center}
+\includegraphics[width = \textwidth]{fig/toad_results.png}
+\end{center}
+\end{figure}
+
+\vfill
+
+\tiny
+J. R. Matchett, Philip B. Stark, Steven M. Ostoja, Roland A. Knapp, Heather C. McKenny, Matthew L. Brooks,
+William T. Langford, Lucas N. Joppa, and Eric L. Berlow. Detecting the influence of rare stressors on rare species in Yosemite National Park using a novel stratified permutation test.
+Scientific Reports, 5: 10702, June 2015.
+}
+
+
 
 
 \subsection[Salt and Mortality]{Salt and Mortality}
 
+\frame{
+\frametitle{Salt}
+
+\begin{itemize}
+\itemsep10pt
+\item There is a major campaign by the World Health Organization (WHO) to reduce salt consumption worldwide \citep{WHO}.
+\item WHO assumes a causal pathway between eating salt and mortality. Main sources of evidence that salt is bad come from observational studies on hypertension \citep{Intersalt}.
+\item \textbf{Goal:} test whether changes in sodium intake are associated with changes in life expectancy, after controlling for other major predictors of health.
+\end{itemize}
+
+
+}
+
 
 \frame{
 \frametitle{Salt}
+An example of faulty analysis of salt and morbidity: \\
+\vspace{10pt}
+After excluding indigenous tribes (red points) from the sample, the association between salt and hypertension \textbf{changes sign} \citep{FreedmanPetitti}.
+
+
+
+\begin{center}
+\begin{figure}[htbp]
+\begin{center}
+\includegraphics[height = 0.6\textheight]{fig/freedmanplot.pdf}
+\end{center}
+\end{figure}
+\end{center}
+}
+
+\frame{
+\frametitle{Salt}
+
+\begin{itemize}
+\itemsep10pt
+\item Response is continuous: life expectancy at age 30
+\item Treatment is continuous: mean daily sodium intake
+\item Prediction: life expectancy at age 30, given alcohol consumption per capita per year, cigarettes per capita per year, and per capita GDP using random forests
+\item Test statistic: Pearson correlation between treatment and residuals
+\item All variables are differenced from 1990 to 2010 to control for baseline levels. Analyses are separate for males and females.
+\end{itemize}
+}
+
+
+
+\frame{
+\frametitle{Salt}
+Sodium consumption appears to be 
+\begin{itemize}
+\item \textbf{uncorrelated} with life expectancy for males 
+\item \textbf{positively correlated} with life expectancy for females
+\end{itemize}
+
 \begin{center}
 \begin{figure}[htbp]
 \begin{center}
@@ -576,6 +671,7 @@ Scientific Reports, 5: 10702, June 2015.
   \frametitle{Future Directions}
 \begin{center}
 \begin{itemize}
+\itemsep20pt
 \item Do different test statistics give greater power when the treatment effect is nonlinear?
 \item What is the optimal way to stratify?
 \item How to quantify uncertainty -- standard errors and confidence intervals?
