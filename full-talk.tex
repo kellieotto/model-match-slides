@@ -183,21 +183,28 @@ Scientific Reports, 5: 10702, June 2015.
 
 
 
+
+
 \frame{
 \frametitle{Neyman-Rubin Causal Model}
 \begin{center}
 \begin{itemize}
+
 \item Population of $i = 1, \dots, N$ individuals. Each individual has two \textbf{potential outcomes}.
 \item $Y_i(1)$ is individual $i$'s outcome if he receives treatment
 \item $Y_i(0)$ is individual $i$'s outcome if he is in the control group
 \item The treatment effect for individual $i$ is $\tau_i = Y_i(1) - Y_i(0)$
 \end{itemize}
-\vfill
-\begin{tikzpicture}
-\draw (0,0) rectangle (1,1) node[pos=.5] {$Y_2(1)$};\draw (1,0) rectangle (2,1)node[pos=.5] {$Y_2(0)$};
-\draw (0,1.5) rectangle (1,2.5) node[pos=.5] {$Y_1(1)$}; \draw (1,1.5) rectangle (2,2.5) node[pos=.5] {$Y_1(0)$};
-\draw (3,0) rectangle (4,1) node[pos=.5] {$Y_4(1)$}; \draw (4,0) rectangle (5,1) node[pos=.5] {$Y_4(0)$};
-\draw (3,1.5) rectangle (4,2.5) node[pos=.5] {$Y_3(1)$}; \draw (4,1.5) rectangle (5,2.5) node[pos=.5] {$Y_3(0)$};
+\end{center}
+\vspace{50pt}
+
+\begin{center}
+\begin{tikzpicture}[overlay, remember picture]
+\centering
+\draw (-2.5,0) rectangle (-1.5,1) node[pos=.5] {$Y_2(1)$};\draw (-1.5,0) rectangle (-0.5,1)node[pos=.5] {$Y_2(0)$};
+\draw (-2.5,1.5) rectangle (-1.5,2.5) node[pos=.5] {$Y_1(1)$}; \draw (-1.5,1.5) rectangle (-0.5,2.5) node[pos=.5] {$Y_1(0)$};
+\draw (0.5,0) rectangle (1.5,1) node[pos=.5] {$Y_4(1)$}; \draw (1.5,0) rectangle (2.5,1) node[pos=.5] {$Y_4(0)$};
+\draw (0.5,1.5) rectangle (1.5,2.5) node[pos=.5] {$Y_3(1)$}; \draw (1.5,1.5) rectangle (2.5,2.5) node[pos=.5] {$Y_3(0)$};
 \end{tikzpicture}
 
 \end{center}
@@ -211,36 +218,22 @@ Scientific Reports, 5: 10702, June 2015.
 \item $T_i$ is a treatment indicator: $1$ if $i$ is treated, $0$ if $i$ is control
 \item The observed outcome for individual $i$ is $Y_i = T_iY_i(1) + (1-T_i)Y_i(0)$
 \end{itemize}
+\end{center}
 
-\vfill
-\begin{tikzpicture}
-\draw (0,0) rectangle (1,1) node[pos=.5] {$Y_2(1)$}; \draw[fill=black]  (1,0) rectangle (2,1)node[pos=.5] {$Y_2(0)$};
-\draw (0,1.5) rectangle (1,2.5) node[pos=.5] {$Y_1(1)$}; \draw[fill=black]  (1,1.5) rectangle (2,2.5) node[pos=.5] {$Y_1(0)$};
-\draw[fill=black]  (3,0) rectangle (4,1) node[pos=.5] {$Y_4(1)$}; \draw (4,0) rectangle (5,1) node[pos=.5] {$Y_4(0)$};
-\draw[fill=black]  (3,1.5) rectangle (4,2.5) node[pos=.5] {$Y_3(1)$}; \draw (4,1.5) rectangle (5,2.5) node[pos=.5] {$Y_3(0)$};
+\vspace{50pt}
+
+\begin{center}
+\begin{tikzpicture}[overlay, remember picture]
+\centering
+\draw (-2.5,0) rectangle (-1.5,1) node[pos=.5] {$Y_2(1)$}; \draw[fill=black]  (-1.5,0) rectangle (-0.5,1)node[pos=.5] {$Y_2(0)$};
+\draw (-2.5,1.5) rectangle (-1.5,2.5) node[pos=.5] {$Y_1(1)$}; \draw[fill=black]  (-1.5,1.5) rectangle (-0.5,2.5) node[pos=.5] {$Y_1(0)$};
+\draw[fill=black]  (0.5,0) rectangle (1.5,1) node[pos=.5] {$Y_4(1)$}; \draw (1.5,0) rectangle (2.5,1) node[pos=.5] {$Y_4(0)$};
+\draw[fill=black]  (0.5,1.5) rectangle (1.5,2.5) node[pos=.5] {$Y_3(1)$}; \draw (1.5,1.5) rectangle (2.5,2.5) node[pos=.5] {$Y_3(0)$};
 \end{tikzpicture}
 \end{center}
 
-\todo{fix box position}
-
 }
 
-
-\frame{
-\frametitle{Estimands}
-\begin{center}
-\begin{itemize}
-\itemsep20pt
-\item Average treatment effect
-$$\mathbb{E}( Y_i(1) - Y_i(0))$$
-\item Average treatment effect on the treated
-$$\mathbb{E}(Y_i(1) - Y_i(0) \mid T_i = 1)$$
-\item Conditional average treatment effect
-$$ \mathbb{E}(Y_i(1) - Y_i(0) \mid X_i) $$
-\item If treatment effect varies by covariates $X$, then averages might not be informative
-\end{itemize}
-\end{center}
-}
 
 \frame{
 \frametitle{Goal}
@@ -357,17 +350,6 @@ This result identifies the average treatment effect in terms of quantities we ca
 }
 
 
-%\frame{
-%\frametitle{Propensity score matching}
-%How to use the result to estimate the average treatment effect?
-%\begin{itemize}
-%\item Often, the true propensity score is unknown. Estimate $\hat{p}(x)$ using logistic or probit regression
-%\item Match or stratify units on $\hat{p}(x)$
-%\item Within groups, take difference in mean outcomes between treated and controls
-%\item Average estimated treatment effects across groups
-%\end{itemize}
-%}
-
 
 \frame{
 \frametitle{Propensity score matching}
@@ -444,15 +426,22 @@ $$ Y_i - \hat{Y}_i \not\independent T_i$$
 
 
 \frame{
-\frametitle{Permutation tests}
+\frametitle{Test statistic}
 
 
-We will use the average difference in means across strata as our test statistic:
-\vspace{30pt}
+If treatment is binary, we will use the average difference in means across strata as our test statistic:
 $$\tau(Y, T) =\sum_{j=1}^J  \frac{N_j}{N} \left\lvert \frac{1}{n_j} \sum_{\substack{i  : S_i = j\\T_i=1}} \left(Y_i - \hat{Y}_i \right) - \frac{1}{N_j - n_j} \sum_{\substack{i : S_i = j\\ T_i=0}} \left(Y_i - \hat{Y}_i \right) \right\rvert$$
 
-\vspace{45pt}
-\textbf{NB:} we can use any other test statistic that measures association between $Y_i - \hat{Y}_i$ and $T_i$, e.g. correlation
+\vspace{30pt}
+
+If treatment is continuous, we will use the average correlation across strata as our test statistic:
+$$\tau(Y, T) =\sum_{j=1}^J  \frac{N_j}{N} \left\lvert \rho_j(Y_i - \hat{Y}_i, T_i) \right\rvert$$
+
+
+\vspace{30pt}
+
+
+\textbf{NB:} we can use any other test statistic that measures association between $Y_i - \hat{Y}_i$ and $T_i$
 }
 
 \frame{ 
@@ -467,7 +456,7 @@ Once we observe the actual data, we know other possible data sets that are equal
 There are 
 $$\prod_{j=1}^J {N_j \choose n_j}$$
 
-equally likely assignments to treatment, conditional on the strata.
+equally likely assignments to treatment, conditional on the strata and number treated in each stratum.
 }
 
 
@@ -512,39 +501,6 @@ $$p = \pr(\tau(Y, T) \geq \tau(Y,  t)) \approx \frac{\sum_{i=1}^B \mathbb{I}( \t
 }
 
 
-%\frame
-%{
-%  \frametitle{Model-based Matching}
-%\begin{center}
-%\begin{itemize}
-%\item Under standard assumptions (conditional independence of treatment and potential outcomes given $X$), the \textbf{average treatment effect} is nonparametrically identified
-%\item Estimate it using the difference in average residuals, $Y - \hat{Y}$, between treated and controls
-%\end{itemize}
-%
-%\begin{figure}[htbp]
-%\includegraphics[width = 0.9\textwidth]{fig/estimates.png}
-%\end{figure}
-%\end{center}
-%}
-
-%\frame
-%{
-%  \frametitle{Model-based Matching}
-%\begin{center}
-%\begin{itemize}
-%\item Use stratified permutation test to test the \textbf{strong null hypothesis} of no treatment effect whatsoever
-%\item Stratifying on $\hat{Y}$ allows us to detect non-constant and non-linear treatment effects
-%\end{itemize}
-%
-%\begin{figure}[htbp]
-%\begin{center}
-%\includegraphics[width = 0.9\textwidth]{fig/power.png}
-%\end{center}
-%\end{figure}
-%
-%
-%\end{center}
-%}
 
 \section[Examples]{Examples}
 
@@ -580,7 +536,7 @@ Scientific Reports, 5: 10702, June 2015.
 
 \frame{
 \frametitle{Toads and Packstock}
-Intensity of packstock use appears to be weakly correlated with toad presence. The correlation is not significant.
+Intensity of packstock use appears to be \textbf{weakly correlated} with toad presence. The correlation is not significant.
  
 \begin{figure}[htbp]
 \begin{center}
@@ -606,8 +562,8 @@ Scientific Reports, 5: 10702, June 2015.
 
 \begin{itemize}
 \itemsep10pt
-\item There is a major campaign by the World Health Organization (WHO) to reduce salt consumption worldwide \citep{WHO}.
-\item WHO assumes a causal pathway between eating salt and mortality. Main sources of evidence that salt is bad come from observational studies on hypertension \citep{Intersalt}.
+\item There is a major campaign by the World Health Organization (WHO) to reduce salt consumption worldwide \citep{WHO}
+\item WHO assumes a causal pathway between eating salt and mortality. Main sources of evidence that salt is bad come from observational studies on hypertension \citep{Intersalt}
 \item \textbf{Goal:} test whether changes in sodium intake are associated with changes in life expectancy, after controlling for other major predictors of health.
 \end{itemize}
 
@@ -666,13 +622,25 @@ Sodium consumption appears to be
 
 
 \section[Conclusions]{Conclusions}
+
+\frame{
+\frametitle{Conclusions}
+\begin{itemize}
+\itemsep20pt
+\item We've developed a novel nonparametric test for treatment effects in observational studies.
+\item Model-based matching is more flexible than traditional methods: it has power to detect non-constant effects and can be used when treatment is non-binary.
+\item Stronger assumptions are needed to assert causation instead of just association.
+\end{itemize}
+
+}
+
 \frame
 {
   \frametitle{Future Directions}
 \begin{center}
 \begin{itemize}
 \itemsep20pt
-\item Do different test statistics give greater power when the treatment effect is nonlinear?
+\item Do different test statistics give greater power?  Under what conditions?
 \item What is the optimal way to stratify?
 \item How to quantify uncertainty -- standard errors and confidence intervals?
 \end{itemize}
